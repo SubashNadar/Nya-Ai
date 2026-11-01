@@ -2,8 +2,9 @@
 
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from sqlalchemy import inspect, text
 
 from app.api.routers import (
@@ -20,6 +21,7 @@ from app.core.config import get_settings
 from app.db.models import RevokedToken, utcnow
 from app.db.seed import seed_if_empty
 from app.db.session import Base, SessionLocal, engine
+from app.services.errors import ServiceError
 
 settings = get_settings()
 
@@ -53,6 +55,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+
+@app.exception_handler(ServiceError)
+async def service_error(_: Request, exc: ServiceError) -> JSONResponse:
+    """Services raise ServiceError subclasses; reply with the same shape as HTTPException."""
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+
 
 app.include_router(auth.router, prefix="/api")
 app.include_router(chat.router, prefix="/api")

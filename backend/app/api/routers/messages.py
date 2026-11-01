@@ -7,7 +7,7 @@ match; see docs/DECISIONS.md "Messages endpoints missing from the API contract".
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.api.schemas import (
+from app.api.schemas.messages import (
     MessageOut,
     MessageThreadOut,
     MessageThreadsListOut,

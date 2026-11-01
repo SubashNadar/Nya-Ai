@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.api.schemas import SupportIn, SupportOut
+from app.api.schemas.support import SupportIn, SupportOut
 from app.db.models import SupportMessage
 from app.db.session import get_db
 

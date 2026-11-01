@@ -13,11 +13,11 @@ from llama_index.readers.file import PDFReader
 from sqlalchemy.engine import Engine
 
 from app.core import observability as obs
-from app.rag import db
+from app.core.paths import RAW_DIR
+from app.rag import tables
 from app.rag.acts import ACTS
 from app.rag.parser import SectionNodeParser, merge_pages
 
-DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 # Official India Code PDFs (Ministry of Home Affairs uploads for the new codes). See data/SOURCES.md.
 SOURCE_URLS = {
     "BNS": "https://indiacode.gov.in/server/api/core/bitstreams/8007a80e-259b-429d-9ca4-1a2f474b5000/content",
@@ -49,7 +49,7 @@ def fetch_act(code: str, force: bool = False) -> Path:
     """Download the official PDF for `code` into data/raw/ unless it is already there."""
     import urllib.request
 
-    dest = DATA_DIR / "raw" / ACTS[code].file
+    dest = RAW_DIR / ACTS[code].file
     if dest.exists() and not force:
         return dest
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -64,7 +64,7 @@ def fetch_act(code: str, force: bool = False) -> Path:
 
 def count_sections(code: str, pdf: Path | None = None) -> dict:
     """Parse a PDF without embedding or a database and compare its sections with the expected count."""
-    pdf = pdf or DATA_DIR / "raw" / ACTS[code].file
+    pdf = pdf or RAW_DIR / ACTS[code].file
     pages = PDFReader().load_data(pdf)
     nodes = SectionNodeParser().split_act(act_document(code, pages, SOURCE_URLS.get(code, "")))
     found = {n.metadata["section"] for n in nodes}
@@ -118,10 +118,10 @@ def ingest_act(
 
 
 def _ingest(code, engine, embed, pdf, pages, source_url, vector_store, docstore, index) -> dict:
-    job = db.Job(engine, code)
+    job = tables.Job(engine, code)
     try:
         if pages is None:
-            pdf = pdf or DATA_DIR / "raw" / ACTS[code].file
+            pdf = pdf or RAW_DIR / ACTS[code].file
             if not pdf.exists():
                 raise FileNotFoundError(f"{pdf} not found. See backend/data/SOURCES.md for where to get it.")
             job.stage("fetch", f"local {pdf.name}")
@@ -153,7 +153,7 @@ def _ingest(code, engine, embed, pdf, pages, source_url, vector_store, docstore,
         job.stage("embed", f"embedded={len(written)} (0 means unchanged since last run)", embedded=len(written))
         job.stage("index", "pgvector + full-text index updated")
 
-        db.upsert_sections(engine, code, section_rows(nodes), source_url)
+        tables.upsert_sections(engine, code, section_rows(nodes), source_url)
         job.stage("eval", "run `nya-agent golden` to check the golden set against this act")
         job.finish("ok")
         return {"act": code, "sections": len(sections), "nodes": len(nodes), "embedded": len(written)}

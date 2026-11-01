@@ -22,7 +22,7 @@ Nya-AI is the only product.
    library, Langfuse observability, per-agent SLOs).
 3. **Capstone design:** SubashNadar/legal-docs-platform `docs/NYA-AI.md` and
    `evals/GOLDEN-QUERIES.md`.
-4. **API contract:** `backend/app/api/schemas.py` + `routers/`, mirrored by
+4. **API contract:** `backend/app/api/schemas/` (one module per router) + `routers/`, mirrored by
    `frontend/src/types.ts` + `lib/api.ts`. If they disagree, that is a bug.
 5. **Decisions:** `docs/DECISIONS.md`.
 6. **SLOs:** `docs/SLOS.md` (definitions, targets, guardrails, how they are tested) and
@@ -54,6 +54,12 @@ Nya-AI is the only product.
   dimensions. Keys never committed.
 
 ## Log (newest first)
+
+- **2026-11-01** — Backend tidy-up: `app/rag/db.py` renamed `app/rag/tables.py`; data paths live in
+  `app/core/paths.py`; `app/api/schemas.py` split into `app/api/schemas/` per router; booking,
+  payment, dashboard and lawyer-card logic moved to `app/services/` (routers are HTTP only; services
+  raise `app/services/errors.py`, mapped to `{"detail"}` responses in `main.py`). Architecture diagram
+  and pitch deck reworked from the owner's 10-point feedback.
 
 - **2026-10-30** — Theme changed from Orbit navy/brass to Sage & Clay (light, calmer) after the owner
   found Orbit too aggressive. Only colours changed; Orbit menu and layout untouched. The first push

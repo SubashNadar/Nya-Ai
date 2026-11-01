@@ -21,7 +21,7 @@ from llama_index.core.vector_stores import (
 from pydantic import BaseModel
 from sqlalchemy.engine import Engine
 
-from app.rag import db
+from app.rag import tables
 from app.rag.acts import ACTS, acts_in_force
 
 ACT_NAMES = {
@@ -88,7 +88,7 @@ class LawLibrary:
             for code in [act] if act else acts:
                 if act and code not in acts:
                     continue  # named act not in force on the date; the temporal node explains why
-                row = db.get_section(self.engine, code, num)
+                row = tables.get_section(self.engine, code, num)
                 if row:
                     out.append(Evidence(
                         act=code, section=num, heading=row["heading"], text=row["text"], page=row["page"],

@@ -11,7 +11,7 @@ from pathlib import Path
 
 from sqlalchemy.engine import Engine
 
-from app.rag import db
+from app.rag import tables
 from app.rag.acts import ACTS
 
 # "BNS §303", "BSA §§61, 63", "CPA 2019 §2(7)", "IPC for the offence, BNSS §531 savings".
@@ -72,7 +72,7 @@ def parse_golden(path: Path) -> list[GoldenRef]:
 
 
 def check(engine: Engine, path: Path) -> GoldenReport:
-    have = db.existing_sections(engine)
+    have = tables.existing_sections(engine)
     report = GoldenReport()
     for ref in parse_golden(path):
         if ref.act not in ACTS:

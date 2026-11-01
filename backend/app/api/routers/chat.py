@@ -6,7 +6,7 @@ import uuid
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from app.api.schemas import (
+from app.api.schemas.chat import (
     ChatHistoryOut,
     ChatMessageIn,
     ChatMessageOut,

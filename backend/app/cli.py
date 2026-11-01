@@ -4,9 +4,8 @@ import argparse
 from datetime import date
 from pathlib import Path
 
-from app.rag import db
-
-DATA = Path(__file__).resolve().parents[1] / "data"
+from app.core.paths import SECTION_MAP_CSV
+from app.rag import tables
 
 
 def main() -> None:
@@ -53,16 +52,16 @@ def main() -> None:
                 print(f"      lettered: {len(r['lettered'])} e.g. {r['lettered'][:8]}")
         raise SystemExit(0 if ok else 1)
 
-    engine = db.get_engine()
+    engine = tables.get_engine()
     if args.cmd == "setup":
-        db.setup(engine)
-        n = db.load_section_map(engine, DATA / "section_map.csv")
+        tables.setup(engine)
+        n = tables.load_section_map(engine, SECTION_MAP_CSV)
         print(f"tables ready; {n} section_map rows loaded")
     elif args.cmd == "ingest":
         from app.rag import index
         from app.rag.ingest import ingest_act
 
-        db.setup(engine)
+        tables.setup(engine)
         embed = index.embed_model()
         for code in args.acts:
             print(ingest_act(code.upper(), engine, embed))
@@ -82,8 +81,8 @@ def main() -> None:
         from sqlalchemy import select
 
         with engine.connect() as conn:
-            for a in conn.execute(select(db.acts)).mappings():
+            for a in conn.execute(select(tables.acts)).mappings():
                 print(f"{a['code']:<5} {a['sections']:>4} sections  ingested {a['ingested_at'] or 'never'}")
-            jobs = conn.execute(select(db.ingestion_jobs).order_by(db.ingestion_jobs.c.id.desc()).limit(5)).mappings()
+            jobs = conn.execute(select(tables.ingestion_jobs).order_by(tables.ingestion_jobs.c.id.desc()).limit(5)).mappings()
             for j in jobs:
                 print(f"job {j['id']} {j['act']} {j['stage']} {j['status']} {j['stats']}")

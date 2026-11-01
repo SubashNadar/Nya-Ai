@@ -14,7 +14,7 @@ from llama_index.core.schema import Document
 from sqlalchemy import text
 
 from app.evals.golden import check
-from app.rag import db, index
+from app.rag import index, tables
 from app.rag.ingest import ingest_act
 from app.rag.retrieve import LawLibrary
 
@@ -24,7 +24,7 @@ FIXTURE = (Path(__file__).parent / "fixtures" / "sample_act.txt").read_text()
 
 @pytest.fixture(scope="module")
 def lib():
-    engine = db.get_engine(URL)
+    engine = tables.get_engine(URL)
     try:
         with engine.connect() as conn:
             conn.execute(text("select 1"))
@@ -33,7 +33,7 @@ def lib():
     with engine.begin() as conn:
         for t in ["data_law_sections", "data_law_docstore", "sections", "section_map", "offence_class", "ingestion_jobs", "acts"]:
             conn.execute(text(f"drop table if exists {t} cascade"))
-    db.setup(engine)
+    tables.setup(engine)
     embed = MockEmbedding(embed_dim=1536)
     vs, ds = index.vector_store(URL), index.docstore(URL)
     pages = [Document(text=FIXTURE, metadata={"page_label": "1"})]
@@ -44,9 +44,9 @@ def lib():
 def test_ingest_records_sections_and_job(lib):
     engine, *_, stats, _ = lib
     assert stats["BNS"]["sections"] == 5
-    assert db.get_section(engine, "BNS", "3A")["heading"] == "Snatching of property"
+    assert tables.get_section(engine, "BNS", "3A")["heading"] == "Snatching of property"
     with engine.connect() as conn:
-        job = conn.execute(db.ingestion_jobs.select().order_by(db.ingestion_jobs.c.id.desc())).mappings().first()
+        job = conn.execute(tables.ingestion_jobs.select().order_by(tables.ingestion_jobs.c.id.desc())).mappings().first()
     assert job["status"] == "ok" and job["stage"] == "done"
     assert "split" in job["log"] and job["stats"]["sections"] == 5
 
@@ -114,4 +114,4 @@ def test_changed_act_replaces_its_old_vectors(lib):
     with engine.connect() as conn:
         n = conn.execute(text("select count(*) from data_law_sections where metadata_->>'act' = 'BSA'")).scalar_one()
     assert n == 4
-    assert db.get_section(engine, "BSA", "3A") is None
+    assert tables.get_section(engine, "BSA", "3A") is None

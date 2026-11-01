@@ -12,22 +12,24 @@ backend/
     main.py              FastAPI app: CORS, routers, startup seed
     cli.py               `uv run nya-agent ...`: fetch, count, setup, ingest, golden, search, status
     api/
-      routers/           auth, chat, lawyers, bookings, payments, dashboard, messages, support
-      schemas.py         request and response models: the API contract
+      routers/           HTTP only: auth, chat, lawyers, bookings, payments, dashboard, messages, support
+      schemas/           request and response models, one module per router: the API contract
     core/
       config.py          settings for the API and the agents, from .env
+      paths.py           data/, data/raw/ and section_map.csv, defined once
       security.py        JWT, OTP and guest login
       observability.py   Langfuse client and PII masking
     db/                  app database (SQLite in dev): session.py, models.py, seed.py
-    services/
+    services/            business rules the routers call; raise errors.py exceptions, not HTTP ones
+      bookings.py, payments.py (Razorpay), dashboard.py, lawyers.py
       chat_engine.py     keyword rule engine, the fallback until the agents answer
     agents/              LangGraph graph and its nodes (release R1)
-    rag/                 law library: parser, ingest, index (pgvector), retrieve (hybrid), acts, db (SQL tables)
+    rag/                 law library: parser, ingest, index (pgvector), retrieve (hybrid), acts, tables (SQL tables)
     evals/               golden-set check; Ragas and SLO scores next (../docs/SLOS.md)
   data/                  SOURCES.md, section_map.csv; PDFs go in data/raw/ (not committed)
   docker/db-init.sql     creates the extra databases for Langfuse and tests
   tests/
-    api/                 booking brief, payments signature, support
+    api/                 booking brief, payments signature, support, service routes
     rag/                 parser and dates offline; ingest and retrieval against Postgres
 ```
 

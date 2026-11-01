@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
-from app.api.schemas import (
+from app.api.schemas.auth import (
     GuestIn,
     LogoutOut,
     MeOut,
