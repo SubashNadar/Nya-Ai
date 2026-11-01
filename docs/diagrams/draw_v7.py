@@ -4,7 +4,7 @@ from draw import (AMBER, AMBER_T, BG, CLAY, EDGE, INK, LINE, MONO, MUTED, SAGE, 
                   defs, mark_azure, mark_calendar, mark_indiacode, mark_langfuse,
                   mark_langgraph, mark_llamaindex, mark_shield, simple)
 
-W, H = 2400, 1320
+W, H = 2400, 1345
 JADE, JADE_L, JADE_T = "#1E6B5C", "#2C7D6C", "#D5EAE3"
 VIO = "#5B4A9A"
 
@@ -157,7 +157,7 @@ def build():
         b.append(item(RX + 22, 188 + i * 92, g, t, s_, RW - 44, tag, tag != "BUILT"))
 
     # ---- 3 retrieval: MCP tools ----
-    tools = [("law_search()", "← statute agent", "BUILT"), ("get_section()", "← any agent · \u201cIPC 420\u201d", "BUILT"),
+    tools = [("law_search()", "← statute agent", "R1"), ("get_section()", "← any agent · \u201cIPC 420\u201d", "R1"),
              ("search_judgments()", "← case-law agent", "R2"), ("map_ipc_to_bns()", "← law-in-force check", "R2"),
              ("acts_in_force()", "← law in force · by date", "R2"), ("sql_lookup()", "← SQL agent · fixed queries", "R2")]
     tico = ["search", "file", "search", "table", "table", "table"]
@@ -177,11 +177,11 @@ def build():
     # ---- 4 law data + ingestion ----
     kx, kwid = CX + 790, 740
     kw = (kwid - 24) / 3
-    kb = [("Bare-act library", ["BNS 358 · BNSS 531", "BSA 170 · IPC 511"], [tile(mark_indiacode(0, 0, 40), 0)], "BUILT"),
-          ("Vector index", ["pgvector 1536-d", "+ BM25 keywords"], [tile(simple("postgresql", 0, 0, 28))], "BUILT"),
-          ("Law SQL tables", ["acts · sections", "IPC→BNS map"], [tile(icon("table"), 0)], "BUILT")]
+    kb = [("Bare-act library", ["BNS 358 · BNSS 531", "BSA 170 · IPC 511"], [tile(mark_indiacode(0, 0, 40), 0)], "PARSED"),
+          ("Vector index", ["pgvector 1536-d", "+ BM25 keywords"], [tile(simple("postgresql", 0, 0, 28))], "NOT INGESTED"),
+          ("Law SQL tables", ["acts · sections", "IPC→BNS map"], [tile(icon("table"), 0)], "NOT INGESTED")]
     for i, (t_, ln, ics, tag) in enumerate(kb):
-        b.append(box(kx + i * (kw + 12), 846, kw, 150, t_, ln, ics, tag))
+        b.append(box(kx + i * (kw + 12), 846, kw, 150, t_, ln, ics, tag, amber=tag != "PARSED"))
         cxm = kx + i * (kw + 12) + kw / 2
         b.append(arrow([(cxm, 1046), (cxm, 1000)], dashed=True))
     b.append(f'<rect x="{kx - 8}" y="1050" width="{kwid + 16}" height="176" rx="14" fill="#FFFFFF" fill-opacity=".55" stroke="#7A6224" stroke-opacity=".3" stroke-dasharray="6 5"/>')
@@ -199,14 +199,21 @@ def build():
 
     # ---- 6 app data: direct, never via MCP ----
     ax, aw = 2010, RX + RW - 2030
-    b.append(box(ax, 846, aw, 130, "Chat memory", ["LangGraph checkpointer", "saves every step"], [tile(simple("sqlite", 0, 0, 28))], "BUILT"))
-    b.append(pill(ax, 1006, aw, "FastAPI services", "login · booking · payments", "#3E5A7A"))
+    b.append(box(ax, 846, aw, 130, "Chat memory", ["LangGraph checkpointer", "saves every step"], [tile(simple("sqlite", 0, 0, 28))], "R1", amber=True))
+    b.append(pill(ax, 1006, aw, "FastAPI services", "web app: login · bookings", "#3E5A7A"))
     b.append(arrow([(ax + aw / 2, 1062), (ax + aw / 2, 1086)], main=True))
     b.append(box(ax, 1090, aw, 130, "User store", ["users · advocates", "bookings · saved briefs"], [tile(icon("db"), 0)], "BUILT"))
     b.append(txt(ax, 1250, "Private data: never a tool", 13, 600, "#3E5A7A", MONO))
     b.append(txt(ax, 1270, "the model can call.", 13, 600, "#3E5A7A", MONO))
     # graph -> chat memory, direct
-    b.append(arrow([(1890, 760), (1890, 774), (1975, 774), (1975, 900), (ax - 4, 900)], main=True))
+    b.append(chip(1690, 680, 210, "Checkpointer", "state after each step", None))
+    b.append(arrow([(1795, 738), (1795, 768), (1972, 768), (1972, 900), (ax - 4, 900)], main=True))
+    # users -> FastAPI services, routed along the outer margin
+    b.append(arrow([(LX, 640), (22, 640), (22, 1318), (2380, 1318), (2380, 1034), (ax + aw + 4, 1034)], dashed=True,
+                   label="web app → FastAPI · login · bookings", lx=1200, ly=1318))
+    # escalation -> booking service (brief saved only after the user confirms)
+    b.append(arrow([(925, 620), (925, 781), (1984, 781), (1984, 1034), (ax - 4, 1034)], dashed=True,
+                   label="brief · after user confirms", lx=925, ly=700))
 
     # wiring
     b.append(arrow([(sx + 60, 606), (sx + 60, 842)], main=True)); b.append(step(4, sx + 84, 720))
