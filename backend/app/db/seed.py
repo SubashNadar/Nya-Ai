@@ -2,7 +2,7 @@
 requests and 3 message threads — exact data from the original design spec
 """
 
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 
 from sqlalchemy.orm import Session
 
@@ -169,7 +169,7 @@ MESSAGE_THREADS = [
 
 
 def _make_ref(seq: int, on: date | None = None) -> str:
-    on = on or datetime.now(timezone.utc).date()
+    on = on or datetime.now(UTC).date()
     return f"NX-{on:%Y%m%d}-{seq:03d}"
 
 

@@ -31,7 +31,12 @@ def vector_store(url: str | None = None) -> PGVectorStore:
         embed_dim=get_settings().EMBED_DIM,
         hybrid_search=True,  # adds a tsvector column so BM25-style text search runs in Postgres
         text_search_config="english",
-        hnsw_kwargs={"hnsw_m": 16, "hnsw_ef_construction": 64, "hnsw_ef_search": 40, "hnsw_dist_method": "vector_cosine_ops"},
+        hnsw_kwargs={
+            "hnsw_m": 16,
+            "hnsw_ef_construction": 64,
+            "hnsw_ef_search": 40,
+            "hnsw_dist_method": "vector_cosine_ops",
+        },
     )
 
 

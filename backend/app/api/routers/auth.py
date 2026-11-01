@@ -1,6 +1,6 @@
 """Auth endpoints: demo OTP login, guest login, current-user lookup, logout."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
@@ -85,9 +85,7 @@ def guest_login(payload: GuestIn, db: Session = Depends(get_db)) -> TokenOut:
         # is hardcoded to her identity in the UI reference (§8).
         user = db.query(User).filter(User.role == "lawyer").first()
         if user is None:
-            raise HTTPException(
-                status.HTTP_503_SERVICE_UNAVAILABLE, detail="Demo lawyer account not seeded"
-            )
+            raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, detail="Demo lawyer account not seeded")
     else:
         user = User(role="user", name="Guest", initials="G", phone=None)
         db.add(user)
@@ -117,7 +115,7 @@ def logout(
         jti = payload.get("jti")
         exp = payload.get("exp")
         if jti is not None and exp is not None:
-            expires_at = datetime.fromtimestamp(exp, tz=timezone.utc)
+            expires_at = datetime.fromtimestamp(exp, tz=UTC)
             if db.get(RevokedToken, jti) is None:
                 db.add(RevokedToken(jti=jti, user_id=user.id, expires_at=expires_at))
             # Prune expired revocations opportunistically so the table stays bounded.

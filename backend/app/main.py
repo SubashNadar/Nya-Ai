@@ -27,7 +27,7 @@ settings = get_settings()
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_app: FastAPI):
     Base.metadata.create_all(bind=engine)
     # create_all never adds columns to an existing table; add the ones introduced since the
     # first release so an older dev database keeps working.
@@ -55,7 +55,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 
 @app.exception_handler(ServiceError)

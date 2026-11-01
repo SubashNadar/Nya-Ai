@@ -73,10 +73,13 @@ date (IPC before 1 July 2024; BNS, BNSS and BSA from then); SQL tables `acts`, `
 Expected section counts: BNS 358, BNSS 531, BSA 170, IPC 511 numbered sections. Langfuse login on
 first start: `admin@nya.local` / `change-me-admin` (change the values in `docker-compose.yml`).
 
-## Tests
+## Tests and static analysis
 
 ```bash
 uv run pytest
+uv run ruff check .          # lint (rules in pyproject.toml)
+uv run ruff format --check .  # formatting, 120 columns
+uv run pylint app             # 10.00/10 on 2026-11-01
 ```
 
 The Postgres tests ingest a synthetic fixture with a mock embedding into the `nya_test` database and

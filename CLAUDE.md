@@ -47,7 +47,8 @@ Nya-AI is the only product.
 ## Conventions
 
 - **uv only** for Python.
-- Push straight to `main`; run `npm run build` and `uv run pytest` (in `backend/`) first.
+- Push straight to `main`; run `npm run build` and, in `backend/`, `uv run pytest`, `uv run ruff check .`,
+  `uv run ruff format --check .` and `uv run pylint app` first.
 - OTP login accepts any 4-digit code. Payments are real Razorpay (test keys), payouts manual.
 - Public legal sources only; never advice on a user's own case; escalate to an advocate.
 - Azure OpenAI (personal subscription): gpt-5.4-nano, gpt-5.4, text-embedding-3-large at 1536

@@ -64,7 +64,10 @@ def test_booking_errors_keep_status_and_detail():
     booking = _book(client, user)
     stranger = _login(client, "9000000002")
     assert client.get(f"/api/bookings/{booking['id']}", headers=stranger).status_code == 403
-    assert client.patch(f"/api/bookings/{booking['id']}/respond", json={"action": "accept"}, headers=user).status_code == 403
+    assert (
+        client.patch(f"/api/bookings/{booking['id']}/respond", json={"action": "accept"}, headers=user).status_code
+        == 403
+    )
 
 
 def test_booking_flow_and_dashboards():

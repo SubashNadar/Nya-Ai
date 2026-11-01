@@ -71,8 +71,12 @@ def count_sections(code: str, pdf: Path | None = None) -> dict:
     numbered = {int("".join(c for c in s if c.isdigit())) for s in found}
     expected = EXPECTED_SECTIONS[code]
     return {
-        "act": code, "pages": len(pages), "sections": len(found), "numbered": len(numbered),
-        "expected": expected, "missing": sorted(set(range(1, expected + 1)) - numbered),
+        "act": code,
+        "pages": len(pages),
+        "sections": len(found),
+        "numbered": len(numbered),
+        "expected": expected,
+        "missing": sorted(set(range(1, expected + 1)) - numbered),
         "extra": sorted(n for n in numbered if n > expected),
         "lettered": sorted(s for s in found if not s.isdigit()),
     }
@@ -86,9 +90,15 @@ def section_rows(nodes: list[TextNode]) -> list[dict]:
         row = rows.setdefault(
             m["section"],
             {
-                "act": m["act"], "section": m["section"], "heading": m["heading"], "chapter": m["chapter"],
-                "chapter_title": m["chapter_title"], "text": "", "page": m["page"],
-                "effective_from": m["effective_from"], "effective_to": m["effective_to"],
+                "act": m["act"],
+                "section": m["section"],
+                "heading": m["heading"],
+                "chapter": m["chapter"],
+                "chapter_title": m["chapter_title"],
+                "text": "",
+                "page": m["page"],
+                "effective_from": m["effective_from"],
+                "effective_to": m["effective_to"],
             },
         )
         row["text"] = (row["text"] + "\n" + n.text).strip()
@@ -134,10 +144,14 @@ def _ingest(code, engine, embed, pdf, pages, source_url, vector_store, docstore,
         nodes = parser.split_act(doc)
         if not nodes:
             raise ValueError("no sections found; the PDF layout may differ from the parser's pattern")
-        sections = sorted({n.metadata["section"] for n in nodes}, key=lambda s: (int("".join(c for c in s if c.isdigit())), s))
+        sections = sorted(
+            {n.metadata["section"] for n in nodes}, key=lambda s: (int("".join(c for c in s if c.isdigit())), s)
+        )
         job.stage(
-            "split", f"sections={len(sections)} nodes={len(nodes)} range={sections[0]}..{sections[-1]}",
-            sections=len(sections), nodes=len(nodes),
+            "split",
+            f"sections={len(sections)} nodes={len(nodes)} range={sections[0]}..{sections[-1]}",
+            sections=len(sections),
+            nodes=len(nodes),
         )
 
         pipeline = IngestionPipeline(

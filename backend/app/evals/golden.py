@@ -90,10 +90,12 @@ def render(report: GoldenReport) -> str:
     def fmt(refs: list[GoldenRef]) -> str:
         return ", ".join(f"Q{r.query} {r.act} §{r.section}" for r in refs) or "none"
 
-    return "\n".join([
-        f"found           {len(report.found):>3}  {fmt(report.found)}",
-        f"MISSING         {len(report.missing):>3}  {fmt(report.missing)}",
-        f"act not loaded  {len(report.not_ingested):>3}  {fmt(report.not_ingested)}",
-        f"outside R0      {len(report.outside_library):>3}  {fmt(report.outside_library)}",
-        "RESULT: " + ("PASS" if report.ok else "FAIL"),
-    ])
+    return "\n".join(
+        [
+            f"found           {len(report.found):>3}  {fmt(report.found)}",
+            f"MISSING         {len(report.missing):>3}  {fmt(report.missing)}",
+            f"act not loaded  {len(report.not_ingested):>3}  {fmt(report.not_ingested)}",
+            f"outside R0      {len(report.outside_library):>3}  {fmt(report.outside_library)}",
+            "RESULT: " + ("PASS" if report.ok else "FAIL"),
+        ]
+    )

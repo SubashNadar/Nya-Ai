@@ -93,10 +93,7 @@ def get_history(
         # No explicit conversation_id: fall back to the authenticated user's most
         # recent conversation (guests with no conversation_id simply get nothing yet).
         last = (
-            db.query(ChatMessage)
-            .filter(ChatMessage.user_id == user.id)
-            .order_by(ChatMessage.created_at.desc())
-            .first()
+            db.query(ChatMessage).filter(ChatMessage.user_id == user.id).order_by(ChatMessage.created_at.desc()).first()
         )
         if last is None:
             return ChatHistoryOut(messages=[])

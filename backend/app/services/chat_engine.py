@@ -21,8 +21,7 @@ RULES: list[dict] = [
             "under Section 379. In plain language:"
         ),
         "points": [
-            "Dishonestly taking movable property out of someone's possession, without "
-            "consent — that's theft.",
+            "Dishonestly taking movable property out of someone's possession, without consent — that's theft.",
             "Punishment: up to 3 years imprisonment, or a fine, or both.",
             "Theft in a dwelling house (Sec 380) carries up to 7 years.",
         ],
@@ -32,12 +31,9 @@ RULES: list[dict] = [
         "keywords": ["deposit", "landlord", "rent"],
         "text": "Withheld security deposits are one of India's most common disputes. Your options:",
         "points": [
-            "Send a written demand (email/WhatsApp counts) citing the deposit clause "
-            "in your rent agreement.",
-            "Under the Model Tenancy Act 2021, deposits must be returned within one "
-            "month of vacating.",
-            "If ignored, file in consumer or civil court — small claims usually "
-            "resolve in 3–6 months.",
+            "Send a written demand (email/WhatsApp counts) citing the deposit clause in your rent agreement.",
+            "Under the Model Tenancy Act 2021, deposits must be returned within one month of vacating.",
+            "If ignored, file in consumer or civil court — small claims usually resolve in 3–6 months.",
         ],
         "citation": "Sources: Model Tenancy Act 2021",
     },
@@ -46,8 +42,7 @@ RULES: list[dict] = [
         "text": "Filing an FIR is free, and the police are duty-bound to register it. Steps:",
         "points": [
             "Go to the police station with jurisdiction over where the incident happened.",
-            "State the facts orally or in writing — under CrPC Section 154 a cognizable "
-            "offence must be registered.",
+            "State the facts orally or in writing — under CrPC Section 154 a cognizable offence must be registered.",
             "Collect your free FIR copy. If refused, escalate to the Superintendent of "
             "Police or file online (most states allow it).",
         ],
@@ -57,12 +52,9 @@ RULES: list[dict] = [
         "keywords": ["divorce", "marriage"],
         "text": "For divorce, the route depends on your marriage law. The most common path:",
         "points": [
-            "Mutual consent divorce (Sec 13B, Hindu Marriage Act) needs 1 year of "
-            "separation and takes 6–18 months.",
-            "Contested divorce requires grounds — cruelty, desertion, adultery — and "
-            "takes longer.",
-            "Maintenance, custody and property can be settled by agreement to speed "
-            "things up.",
+            "Mutual consent divorce (Sec 13B, Hindu Marriage Act) needs 1 year of separation and takes 6–18 months.",
+            "Contested divorce requires grounds — cruelty, desertion, adultery — and takes longer.",
+            "Maintenance, custody and property can be settled by agreement to speed things up.",
         ],
         "citation": "Sources: Hindu Marriage Act §13B",
     },
@@ -126,9 +118,7 @@ def _claude_answer(message: str) -> dict | None:
             system=ANTHROPIC_SYSTEM_PROMPT,
             messages=[{"role": "user", "content": message}],
         )
-        raw = "".join(
-            block.text for block in response.content if getattr(block, "type", None) == "text"
-        ).strip()
+        raw = "".join(block.text for block in response.content if getattr(block, "type", None) == "text").strip()
         if raw.startswith("```"):
             raw = raw.strip("`")
             if raw.startswith("json"):
@@ -139,7 +129,7 @@ def _claude_answer(message: str) -> dict | None:
             "points": [str(p) for p in parsed.get("points", [])],
             "citation": str(parsed.get("citation", "")),
         }
-    except Exception:  # noqa: BLE001 - any failure falls back to the rule engine
+    except Exception:  # noqa: BLE001  # pylint: disable=broad-exception-caught  # any failure falls back to the rule engine
         logger.exception("Anthropic chat call failed; falling back to rule engine")
         return None
 

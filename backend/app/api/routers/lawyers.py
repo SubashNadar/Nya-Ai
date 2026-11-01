@@ -12,9 +12,7 @@ router = APIRouter(prefix="/lawyers", tags=["lawyers"])
 
 
 @router.get("", response_model=LawyersListOut)
-def list_lawyers(
-    category: str | None = Query(default=None), db: Session = Depends(get_db)
-) -> LawyersListOut:
+def list_lawyers(category: str | None = Query(default=None), db: Session = Depends(get_db)) -> LawyersListOut:
     query = db.query(Lawyer)
     if category and category.lower() != "all":
         query = query.filter(Lawyer.category == category)

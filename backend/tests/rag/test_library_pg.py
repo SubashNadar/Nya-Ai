@@ -31,13 +31,24 @@ def lib():
     except Exception:
         pytest.skip("Postgres with pgvector is not running (docker compose up -d db)")
     with engine.begin() as conn:
-        for t in ["data_law_sections", "data_law_docstore", "sections", "section_map", "offence_class", "ingestion_jobs", "acts"]:
+        for t in [
+            "data_law_sections",
+            "data_law_docstore",
+            "sections",
+            "section_map",
+            "offence_class",
+            "ingestion_jobs",
+            "acts",
+        ]:
             conn.execute(text(f"drop table if exists {t} cascade"))
     tables.setup(engine)
     embed = MockEmbedding(embed_dim=1536)
     vs, ds = index.vector_store(URL), index.docstore(URL)
     pages = [Document(text=FIXTURE, metadata={"page_label": "1"})]
-    stats = {code: ingest_act(code, engine, embed, pages=pages, source_url="test", vector_store=vs, docstore=ds) for code in ["BNS", "IPC"]}
+    stats = {
+        code: ingest_act(code, engine, embed, pages=pages, source_url="test", vector_store=vs, docstore=ds)
+        for code in ["BNS", "IPC"]
+    }
     return engine, embed, vs, ds, stats, LawLibrary(engine, embed, vector_store=vs)
 
 
@@ -46,15 +57,24 @@ def test_ingest_records_sections_and_job(lib):
     assert stats["BNS"]["sections"] == 5
     assert tables.get_section(engine, "BNS", "3A")["heading"] == "Snatching of property"
     with engine.connect() as conn:
-        job = conn.execute(tables.ingestion_jobs.select().order_by(tables.ingestion_jobs.c.id.desc())).mappings().first()
+        job = (
+            conn.execute(tables.ingestion_jobs.select().order_by(tables.ingestion_jobs.c.id.desc())).mappings().first()
+        )
     assert job["status"] == "ok" and job["stage"] == "done"
     assert "split" in job["log"] and job["stats"]["sections"] == 5
 
 
 def test_reingest_unchanged_act_embeds_nothing(lib):
     engine, embed, vs, ds, _, _ = lib
-    again = ingest_act("BNS", engine, embed, pages=[Document(text=FIXTURE, metadata={"page_label": "1"})],
-                       source_url="test", vector_store=vs, docstore=ds)
+    again = ingest_act(
+        "BNS",
+        engine,
+        embed,
+        pages=[Document(text=FIXTURE, metadata={"page_label": "1"})],
+        source_url="test",
+        vector_store=vs,
+        docstore=ds,
+    )
     assert again["embedded"] == 0
 
 
@@ -81,7 +101,7 @@ def test_exact_section_reference_comes_first(lib):
 def test_named_act_not_in_force_is_not_returned_as_exact(lib):
     *_, library = lib
     hits = library.search("IPC 4 punishment", as_of=date(2025, 1, 1))
-    assert all(not (e.act == "IPC") for e in hits)
+    assert all(e.act != "IPC" for e in hits)
 
 
 def test_golden_check(lib, tmp_path):
@@ -108,9 +128,27 @@ def test_ingesting_one_act_leaves_the_other_alone(lib):
 
 def test_changed_act_replaces_its_old_vectors(lib):
     engine, embed, vs, ds, _, _ = lib
-    changed = FIXTURE.replace("3A. Snatching of property.—Taking is snatching if the offender suddenly or quickly seizes the property.\n", "")
-    ingest_act("BSA", engine, embed, pages=[Document(text=FIXTURE, metadata={"page_label": "1"})], source_url="t", vector_store=vs, docstore=ds)
-    ingest_act("BSA", engine, embed, pages=[Document(text=changed, metadata={"page_label": "1"})], source_url="t", vector_store=vs, docstore=ds)
+    changed = FIXTURE.replace(
+        "3A. Snatching of property.—Taking is snatching if the offender suddenly or quickly seizes the property.\n", ""
+    )
+    ingest_act(
+        "BSA",
+        engine,
+        embed,
+        pages=[Document(text=FIXTURE, metadata={"page_label": "1"})],
+        source_url="t",
+        vector_store=vs,
+        docstore=ds,
+    )
+    ingest_act(
+        "BSA",
+        engine,
+        embed,
+        pages=[Document(text=changed, metadata={"page_label": "1"})],
+        source_url="t",
+        vector_store=vs,
+        docstore=ds,
+    )
     with engine.connect() as conn:
         n = conn.execute(text("select count(*) from data_law_sections where metadata_->>'act' = 'BSA'")).scalar_one()
     assert n == 4

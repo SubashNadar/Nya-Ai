@@ -1,6 +1,6 @@
 """Booking rules: create, list, fetch with ownership checks, and the advocate's response."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -20,9 +20,7 @@ def to_out(booking: Booking, lawyer: Lawyer) -> BookingOut:
         client_name=booking.client_name,
         client_initials=booking.client_initials,
         topic=booking.topic,
-        brief=ConsultBrief.model_validate_json(booking.brief_json)
-        if booking.brief_json
-        else None,
+        brief=ConsultBrief.model_validate_json(booking.brief_json) if booking.brief_json else None,
         day_label=booking.day_label,
         slot_label=booking.slot_label,
         consult_type=booking.consult_type,
@@ -38,12 +36,9 @@ def with_lawyer(db: Session, booking: Booking) -> BookingOut:
 
 
 def next_ref(db: Session) -> str:
-    today = datetime.now(timezone.utc).date()
+    today = datetime.now(UTC).date()
     prefix = f"NX-{today:%Y%m%d}-"
-    count_today = (
-        db.query(func.count(Booking.id)).filter(Booking.ref.like(f"{prefix}%")).scalar()
-        or 0
-    )
+    count_today = db.query(func.count(Booking.id)).filter(Booking.ref.like(f"{prefix}%")).scalar() or 0
     return f"{prefix}{count_today + 1:03d}"
 
 

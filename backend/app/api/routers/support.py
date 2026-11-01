@@ -1,6 +1,6 @@
 """Public Contact page endpoint. No login needed, so a signed-out visitor can reach the team."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, status
 from sqlalchemy import func
@@ -15,11 +15,9 @@ router = APIRouter(prefix="/support", tags=["support"])
 
 def _next_ref(db: Session) -> str:
     """`SUP-YYYYMMDD-###`, counted per UTC day like booking refs."""
-    today = datetime.now(timezone.utc).date()
+    today = datetime.now(UTC).date()
     prefix = f"SUP-{today:%Y%m%d}-"
-    count_today = (
-        db.query(func.count(SupportMessage.id)).filter(SupportMessage.ref.like(f"{prefix}%")).scalar() or 0
-    )
+    count_today = db.query(func.count(SupportMessage.id)).filter(SupportMessage.ref.like(f"{prefix}%")).scalar() or 0
     return f"{prefix}{count_today + 1:03d}"
 
 

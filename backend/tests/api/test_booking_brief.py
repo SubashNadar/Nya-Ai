@@ -47,7 +47,13 @@ def test_brief_is_saved_and_visible_to_advocate():
     }
     created = client.post(
         "/api/bookings",
-        json={"lawyer_id": lawyer_id, "day_label": "Today", "slot_label": "10:00 AM", "consult_type": "Video", "brief": brief},
+        json={
+            "lawyer_id": lawyer_id,
+            "day_label": "Today",
+            "slot_label": "10:00 AM",
+            "consult_type": "Video",
+            "brief": brief,
+        },
         headers=user,
     )
     assert created.status_code == 200, created.text

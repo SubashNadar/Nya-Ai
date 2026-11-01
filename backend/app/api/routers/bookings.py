@@ -27,9 +27,7 @@ def create_booking(
 
 
 @router.get("/me", response_model=BookingsListOut)
-def my_bookings(
-    db: Session = Depends(get_db), user: User = Depends(get_current_user)
-) -> BookingsListOut:
+def my_bookings(db: Session = Depends(get_db), user: User = Depends(get_current_user)) -> BookingsListOut:
     return BookingsListOut(bookings=svc.list_for(db, user))
 
 

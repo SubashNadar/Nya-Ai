@@ -22,13 +22,11 @@ _PREFIX = r"^[ \t]*(?:\d{1,2}[ \t]*\*[ \t]*)?\[?[ \t]*(?P<num>\d{1,3}[A-Z]{0,2})
 # Lookahead: the text here does not start another numbered section.
 _NOT_SECTION = r"(?!(?:\d{1,2}[ \t]*\*[ \t]*)?\[?[ \t]*\d{1,3}[A-Z]{0,2}\.(?:\s|[—–]))"
 _WRAP = (
-    r"(?:\n[ \t]*\d{1,4}[ \t]*)?(?:\n[ \t]*(?=\n))*\n[ \t]*"
-    + _NOT_SECTION + r"(?![A-Z]{1,3}\.[ \t]*[—–])"
+    r"(?:\n[ \t]*\d{1,4}[ \t]*)?(?:\n[ \t]*(?=\n))*\n[ \t]*" + _NOT_SECTION + r"(?![A-Z]{1,3}\.[ \t]*[—–])"
     r"[^\s—–][^\n—–]{0,219}?"
 )
 SECTION_START = re.compile(
-    _PREFIX + r"(?:\s*+[—–]\s*+|\s++)"
-    + _NOT_SECTION + r"(?P<heading>[^\s—–][^\n—–]{1,219}?(?:" + _WRAP + r"){0,2})"
+    _PREFIX + r"(?:\s*+[—–]\s*+|\s++)" + _NOT_SECTION + r"(?P<heading>[^\s—–][^\n—–]{1,219}?(?:" + _WRAP + r"){0,2})"
     r"\.?\s*(?:—|–|-{2}|-[ \t]+-|\.-)\s*",
     re.MULTILINE,
 )
@@ -44,7 +42,9 @@ REPEALED_RANGE = re.compile(
 # Misprints in the official PDFs, fixed before parsing. Each is the exact printed text and its fix.
 ERRATA: dict[str, list[tuple[str, str]]] = {
     # The body of IPC 330 is printed as "320." (its margin note says 330).
-    "IPC": [("320. Voluntarily causing hurt to extort confession", "330. Voluntarily causing hurt to extort confession")],
+    "IPC": [
+        ("320. Voluntarily causing hurt to extort confession", "330. Voluntarily causing hurt to extort confession")
+    ],
 }
 CHAPTER = re.compile(r"^\s*CHAPTER\s+(?P<num>[IVXLC]+[A-Z]?)\s*\n\s*(?P<title>[^\n]{3,200})", re.MULTILINE)
 # Amendment footnotes India Code prints at the foot of a page, e.g. "1. Subs. by Act 5 of 2009".
@@ -119,7 +119,14 @@ class SectionNodeParser(NodeParser):
                     id_=f"{act}-{num}" + (f"-p{p + 1}" if len(parts) > 1 else ""),
                     text=part,
                     metadata={**base, "part": p + 1, "parts": len(parts)},
-                    excluded_embed_metadata_keys=["source_url", "page", "part", "parts", "effective_from", "effective_to"],
+                    excluded_embed_metadata_keys=[
+                        "source_url",
+                        "page",
+                        "part",
+                        "parts",
+                        "effective_from",
+                        "effective_to",
+                    ],
                     excluded_llm_metadata_keys=["source_url", "part", "parts"],
                     # Links the node to its act, so re-ingesting a changed act deletes its old vectors.
                     relationships={NodeRelationship.SOURCE: doc.as_related_node_info()},

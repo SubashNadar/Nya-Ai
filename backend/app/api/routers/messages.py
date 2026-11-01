@@ -42,9 +42,7 @@ def _require_lawyer_thread(db: Session, thread_id: str, user: User) -> MessageTh
 
 
 @router.get("/threads", response_model=MessageThreadsListOut)
-def list_threads(
-    db: Session = Depends(get_db), user: User = Depends(get_current_user)
-) -> MessageThreadsListOut:
+def list_threads(db: Session = Depends(get_db), user: User = Depends(get_current_user)) -> MessageThreadsListOut:
     if user.role != "lawyer" or user.lawyer_id is None:
         raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Lawyer account required")
     threads = (

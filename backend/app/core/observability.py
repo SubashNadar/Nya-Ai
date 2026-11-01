@@ -4,9 +4,10 @@ Tracing is off when no Langfuse keys are set, so tests and a first local run nee
 """
 
 import re
+from collections.abc import Iterator
 from contextlib import contextmanager
 from functools import lru_cache
-from typing import Any, Iterator
+from typing import Any
 
 from app.core.config import get_settings
 
@@ -42,7 +43,9 @@ def langfuse():
         return None
     from langfuse import Langfuse
 
-    return Langfuse(public_key=s.LANGFUSE_PUBLIC_KEY, secret_key=s.LANGFUSE_SECRET_KEY, base_url=s.LANGFUSE_HOST, mask=_mask)
+    return Langfuse(
+        public_key=s.LANGFUSE_PUBLIC_KEY, secret_key=s.LANGFUSE_SECRET_KEY, base_url=s.LANGFUSE_HOST, mask=_mask
+    )
 
 
 class _NoSpan:
@@ -57,5 +60,5 @@ def span(name: str, **fields: Any) -> Iterator[Any]:
     if client is None:
         yield _NoSpan()
         return
-    with client.start_as_current_observation(name=name, as_type="span", **fields) as obs:
+    with client.start_as_current_observation(name=name, as_type="span", **fields) as obs:  # pylint: disable=not-context-manager
         yield obs

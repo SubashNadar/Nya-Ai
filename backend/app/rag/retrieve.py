@@ -90,10 +90,17 @@ class LawLibrary:
                     continue  # named act not in force on the date; the temporal node explains why
                 row = tables.get_section(self.engine, code, num)
                 if row:
-                    out.append(Evidence(
-                        act=code, section=num, heading=row["heading"], text=row["text"], page=row["page"],
-                        score=1.0, found_by="exact",
-                    ))
+                    out.append(
+                        Evidence(
+                            act=code,
+                            section=num,
+                            heading=row["heading"],
+                            text=row["text"],
+                            page=row["page"],
+                            score=1.0,
+                            found_by="exact",
+                        )
+                    )
         return out
 
     def search(self, question: str, as_of: date | None = None, acts: list[str] | None = None) -> list[Evidence]:
@@ -107,7 +114,11 @@ class LawLibrary:
         vector = self.index.as_retriever(similarity_top_k=10, filters=filters)
         text = self.index.as_retriever(vector_store_query_mode="text_search", sparse_top_k=10, filters=filters)
         fused = QueryFusionRetriever(
-            [vector, text], mode="reciprocal_rerank", num_queries=1, similarity_top_k=self.top_k * 2, use_async=False,
+            [vector, text],
+            mode="reciprocal_rerank",
+            num_queries=1,
+            similarity_top_k=self.top_k * 2,
+            use_async=False,
             # The LLM only rewrites queries, which num_queries=1 turns off; this stops LlamaIndex
             # from loading its default OpenAI model.
             llm=MockLLM(),
@@ -120,11 +131,18 @@ class LawLibrary:
             if key in seen:
                 continue
             seen.add(key)
-            evidence.append(Evidence(
-                act=m["act"], section=m["section"], heading=m["heading"], text=hit.node.get_content(),
-                page=m.get("page"), source_url=m.get("source_url") or None, score=float(hit.score or 0),
-                found_by="hybrid",
-            ))
+            evidence.append(
+                Evidence(
+                    act=m["act"],
+                    section=m["section"],
+                    heading=m["heading"],
+                    text=hit.node.get_content(),
+                    page=m.get("page"),
+                    source_url=m.get("source_url") or None,
+                    score=float(hit.score or 0),
+                    found_by="hybrid",
+                )
+            )
         return evidence[: self.top_k]
 
 

@@ -40,6 +40,7 @@ dev = [
     "pytest>=9.2.0",
     "pytest-asyncio>=0.24.0",
     "ruff>=0.7.0",
+    "pylint>=3.3.0",
 ]
 
 [build-system]
@@ -51,3 +52,58 @@ packages = ["app"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+asyncio_default_fixture_loop_scope = "function"
+
+# Static analysis (NIIT rule 1): `uv run ruff check .` and `uv run pylint app`.
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["data"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP", "SIM", "C4", "PL"]
+ignore = [
+    "B008",     # FastAPI's Depends()/Query() in defaults is the framework's pattern
+    "PLR0911",  # many returns: the CLI and the parser read better flat
+    "PLR0912",
+    "PLR0913",
+    "PLR0915",
+    "PLR2004",  # magic numbers: legal section numbers and HTTP codes are literal by nature
+    "PLR0917",
+    "PLC0415",  # the CLI and services import heavy modules lazily on purpose
+    "C408",     # dict(...) calls are kept where they read better than literals
+]
+
+[tool.pylint.main]
+py-version = "3.12"
+jobs = 0
+ignore-paths = ["^data/.*$"]
+load-plugins = ["pylint.extensions.docparams"]
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint."messages control"]
+disable = [
+    "missing-function-docstring",  # docstrings where they add something, not on every handler
+    "missing-class-docstring",     # Pydantic and SQLAlchemy models are self-describing
+    "too-few-public-methods",      # Pydantic models
+    "too-many-arguments",
+    "too-many-positional-arguments",
+    "too-many-locals",
+    "too-many-return-statements",
+    "too-many-branches",
+    "too-many-statements",
+    "import-outside-toplevel",     # the CLI imports heavy modules lazily on purpose
+    "duplicate-code",
+    "use-dict-literal",            # matches Ruff's C408 choice
+]
+
+[tool.pylint.typecheck]
+generated-members = ["order", "utility"]  # razorpay.Client attaches these at runtime
+
+[tool.pylint.basic]
+good-names = ["SessionLocal", "db", "e", "i", "k", "n", "r", "s", "_"]
+
+[tool.pylint.design]
+max-attributes = 12

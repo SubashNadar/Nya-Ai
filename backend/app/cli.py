@@ -42,8 +42,10 @@ def main() -> None:
             r = count_sections(code.upper())
             good = not r["missing"] and not r["extra"]
             ok &= good
-            print(f"{r['act']:<5} {'OK  ' if good else 'DIFF'} {r['numbered']}/{r['expected']} numbered, "
-                  f"{r['sections']} total, {r['pages']} pages")
+            print(
+                f"{r['act']:<5} {'OK  ' if good else 'DIFF'} {r['numbered']}/{r['expected']} numbered, "
+                f"{r['sections']} total, {r['pages']} pages"
+            )
             if r["missing"]:
                 print(f"      missing: {r['missing'][:40]}{' ...' if len(r['missing']) > 40 else ''}")
             if r["extra"]:
@@ -83,6 +85,8 @@ def main() -> None:
         with engine.connect() as conn:
             for a in conn.execute(select(tables.acts)).mappings():
                 print(f"{a['code']:<5} {a['sections']:>4} sections  ingested {a['ingested_at'] or 'never'}")
-            jobs = conn.execute(select(tables.ingestion_jobs).order_by(tables.ingestion_jobs.c.id.desc()).limit(5)).mappings()
+            jobs = conn.execute(
+                select(tables.ingestion_jobs).order_by(tables.ingestion_jobs.c.id.desc()).limit(5)
+            ).mappings()
             for j in jobs:
                 print(f"job {j['id']} {j['act']} {j['stage']} {j['status']} {j['stats']}")

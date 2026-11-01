@@ -6,7 +6,7 @@ each ingestion run stage by stage, which the law library admin screen reads.
 """
 
 import csv
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from sqlalchemy import (
@@ -109,14 +109,24 @@ def setup(engine: Engine) -> None:
     with engine.begin() as conn:
         for a in ACTS.values():
             stmt = insert(acts).values(
-                code=a.code, title=a.title, in_force_from=a.in_force_from, repealed_on=a.repealed_on,
-                replaced_by=a.replaced_by, sections=0,
+                code=a.code,
+                title=a.title,
+                in_force_from=a.in_force_from,
+                repealed_on=a.repealed_on,
+                replaced_by=a.replaced_by,
+                sections=0,
             )
-            conn.execute(stmt.on_conflict_do_update(
-                index_elements=["code"],
-                set_={"title": a.title, "in_force_from": a.in_force_from, "repealed_on": a.repealed_on,
-                      "replaced_by": a.replaced_by},
-            ))
+            conn.execute(
+                stmt.on_conflict_do_update(
+                    index_elements=["code"],
+                    set_={
+                        "title": a.title,
+                        "in_force_from": a.in_force_from,
+                        "repealed_on": a.repealed_on,
+                        "replaced_by": a.replaced_by,
+                    },
+                )
+            )
 
 
 def upsert_sections(engine: Engine, act: str, rows: list[dict], source_url: str) -> None:
@@ -126,17 +136,19 @@ def upsert_sections(engine: Engine, act: str, rows: list[dict], source_url: str)
         if rows:
             conn.execute(sections.insert(), rows)
         conn.execute(
-            acts.update().where(acts.c.code == act).values(
-                sections=len(rows), source_url=source_url, ingested_at=datetime.now(timezone.utc)
-            )
+            acts.update()
+            .where(acts.c.code == act)
+            .values(sections=len(rows), source_url=source_url, ingested_at=datetime.now(UTC))
         )
 
 
 def get_section(engine: Engine, act: str, section: str) -> dict | None:
     with engine.connect() as conn:
-        row = conn.execute(
-            select(sections).where(sections.c.act == act, sections.c.section == section)
-        ).mappings().first()
+        row = (
+            conn.execute(select(sections).where(sections.c.act == act, sections.c.section == section))
+            .mappings()
+            .first()
+        )
     return dict(row) if row else None
 
 
@@ -158,10 +170,12 @@ def load_section_map(engine: Engine, path: Path) -> int:
     with engine.begin() as conn:
         for r in rows:
             stmt = insert(section_map).values(**r)
-            conn.execute(stmt.on_conflict_do_update(
-                index_elements=["old_act", "old_section", "new_act", "new_section"],
-                set_={"note": r["note"], "verified": r["verified"]},
-            ))
+            conn.execute(
+                stmt.on_conflict_do_update(
+                    index_elements=["old_act", "old_section", "new_act", "new_section"],
+                    set_={"note": r["note"], "verified": r["verified"]},
+                )
+            )
     return len(rows)
 
 
@@ -172,27 +186,44 @@ class Job:
         self.engine, self.act, self.lines = engine, act, []
         with engine.begin() as conn:
             self.id = conn.execute(
-                ingestion_jobs.insert().values(
-                    act=act, stage="fetch", status="running", stats={}, log="",
-                    started_at=datetime.now(timezone.utc),
-                ).returning(ingestion_jobs.c.id)
+                ingestion_jobs.insert()
+                .values(
+                    act=act,
+                    stage="fetch",
+                    status="running",
+                    stats={},
+                    log="",
+                    started_at=datetime.now(UTC),
+                )
+                .returning(ingestion_jobs.c.id)
             ).scalar_one()
 
     def stage(self, stage: str, message: str, **stats) -> None:
-        stamp = datetime.now(timezone.utc).strftime("%H:%M:%S")
+        stamp = datetime.now(UTC).strftime("%H:%M:%S")
         self.lines.append(f"{stamp} {stage:<6} {message}")
         print(self.lines[-1])
         with obs.span(f"ingest.{stage}", input=message, metadata={"act": self.act, "job_id": self.id, **stats}):
             pass
         with self.engine.begin() as conn:
             row = conn.execute(select(ingestion_jobs.c.stats).where(ingestion_jobs.c.id == self.id)).scalar_one()
-            conn.execute(ingestion_jobs.update().where(ingestion_jobs.c.id == self.id).values(
-                stage=stage, stats={**row, **stats}, log="\n".join(self.lines),
-            ))
+            conn.execute(
+                ingestion_jobs.update()
+                .where(ingestion_jobs.c.id == self.id)
+                .values(
+                    stage=stage,
+                    stats={**row, **stats},
+                    log="\n".join(self.lines),
+                )
+            )
 
     def finish(self, status: str) -> None:
         with self.engine.begin() as conn:
-            conn.execute(ingestion_jobs.update().where(ingestion_jobs.c.id == self.id).values(
-                status=status, stage="done" if status == "ok" else self.lines[-1].split()[1] if self.lines else "fetch",
-                finished_at=datetime.now(timezone.utc),
-            ))
+            conn.execute(
+                ingestion_jobs.update()
+                .where(ingestion_jobs.c.id == self.id)
+                .values(
+                    status=status,
+                    stage="done" if status == "ok" else self.lines[-1].split()[1] if self.lines else "fetch",
+                    finished_at=datetime.now(UTC),
+                )
+            )

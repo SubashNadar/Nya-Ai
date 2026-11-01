@@ -1,7 +1,7 @@
 """SQLAlchemy ORM models."""
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -14,7 +14,7 @@ def gen_id() -> str:
 
 
 def utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class User(Base):
@@ -27,9 +27,7 @@ class User(Base):
     phone: Mapped[str | None] = mapped_column(String(20), nullable=True, index=True)
     # Set only for role="lawyer" accounts, linking the login identity to a seeded
     # Lawyer row (the demo only ever exposes one lawyer-portal persona: Meera Krishnan).
-    lawyer_id: Mapped[str | None] = mapped_column(
-        String(32), ForeignKey("lawyers.id"), nullable=True
-    )
+    lawyer_id: Mapped[str | None] = mapped_column(String(32), ForeignKey("lawyers.id"), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     lawyer: Mapped["Lawyer | None"] = relationship(back_populates="account")
@@ -124,9 +122,7 @@ class PaymentOrder(Base):
     currency: Mapped[str] = mapped_column(String(3), default="INR")
     # Our reference sent to Razorpay as `receipt` — reuses booking.ref.
     receipt: Mapped[str] = mapped_column(String(64))
-    razorpay_order_id: Mapped[str | None] = mapped_column(
-        String(64), nullable=True, unique=True, index=True
-    )
+    razorpay_order_id: Mapped[str | None] = mapped_column(String(64), nullable=True, unique=True, index=True)
     razorpay_payment_id: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
     razorpay_signature: Mapped[str | None] = mapped_column(String(256), nullable=True)
     verified: Mapped[bool] = mapped_column(Boolean, default=False)

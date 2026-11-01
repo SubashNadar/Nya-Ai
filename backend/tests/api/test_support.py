@@ -38,5 +38,13 @@ def test_support_message_gets_daily_ref():
 
 def test_support_message_rejects_short_text_and_unknown_topic():
     client = _client()
-    assert client.post("/api/support", json={"name": "A", "contact": "a@b.c", "topic": "other", "text": "hi"}).status_code == 422
-    assert client.post("/api/support", json={"name": "A", "contact": "a@b.c", "topic": "sales", "text": "long enough text"}).status_code == 422
+    assert (
+        client.post("/api/support", json={"name": "A", "contact": "a@b.c", "topic": "other", "text": "hi"}).status_code
+        == 422
+    )
+    assert (
+        client.post(
+            "/api/support", json={"name": "A", "contact": "a@b.c", "topic": "sales", "text": "long enough text"}
+        ).status_code
+        == 422
+    )

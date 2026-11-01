@@ -1,6 +1,6 @@
 """Per-role dashboard summaries."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy.orm import Session
 
@@ -24,9 +24,9 @@ ACTIVE_BOOKING_STATUSES = ("paid", "accepted", "completed")
 
 
 def relative_time(dt: datetime) -> str:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
+        dt = dt.replace(tzinfo=UTC)
     seconds = (now - dt).total_seconds()
     if seconds < 60:
         return "just now"
@@ -44,9 +44,7 @@ def user_summary(db: Session, user: User) -> UserDashboardOut:
     if user.role != "user":
         raise Forbidden("User account required")
 
-    asked = db.query(ChatMessage).filter(
-        ChatMessage.user_id == user.id, ChatMessage.role == "user"
-    )
+    asked = db.query(ChatMessage).filter(ChatMessage.user_id == user.id, ChatMessage.role == "user")
     questions_answered = asked.count()
 
     user_bookings = (
@@ -56,9 +54,7 @@ def user_summary(db: Session, user: User) -> UserDashboardOut:
         .all()
     )
     consults_booked = len(user_bookings)
-    upcoming_booking = next(
-        (b for b in user_bookings if b.status in ("paid", "accepted")), None
-    )
+    upcoming_booking = next((b for b in user_bookings if b.status in ("paid", "accepted")), None)
 
     recent = [
         RecentQuestion(q=msg.text, when=relative_time(msg.created_at))
@@ -70,9 +66,7 @@ def user_summary(db: Session, user: User) -> UserDashboardOut:
         questions_answered=questions_answered,
         consults_booked=consults_booked,
         saved_amount=4500 if consults_booked else 0,
-        upcoming=with_lawyer(db, upcoming_booking)
-        if upcoming_booking is not None
-        else None,
+        upcoming=with_lawyer(db, upcoming_booking) if upcoming_booking is not None else None,
         recent_questions=recent[:4],
     )
 
