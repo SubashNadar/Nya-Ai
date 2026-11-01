@@ -12,7 +12,7 @@ information, not legal advice.
 
 ![Nya-AI system architecture](docs/diagrams/architecture.png)
 
-Detailed nine-layer view (orchestration, agents, tools, memory and RAG, observability, reliability, governance, infrastructure): [docs/diagrams/architecture-detailed.png](docs/diagrams/architecture-detailed.png).
+Detailed view in four layers (users, agent system, knowledge and tools, observability): [docs/diagrams/architecture-detailed.png](docs/diagrams/architecture-detailed.png).
 
 How a question is answered: [docs/diagrams/workflow.png](docs/diagrams/workflow.png) (SVG sources beside them).
 
