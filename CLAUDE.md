@@ -40,7 +40,8 @@ Nya-AI is the only product.
     retrieval with act/date filters, SQL tables. CLI `uv run nya-agent ...` (`app/cli.py`).
     `docker compose up -d` in `backend/` starts pgvector (5433) and Langfuse (3000). PDFs go in
     `backend/data/raw/` (gitignored).
-  - `app/agents/` — LangGraph graph (R1, not started). `app/evals/` — golden check; Ragas next.
+  - `app/agents/` — guardrails, triage, model safety layer; LangGraph graph (R1) not started.
+    `app/evals/` — golden check, SLO runner (`nya-agent slo`), RBAC probes, Ragas and judge scoring.
 - `frontend/` — Vite + React + TypeScript + Tailwind 3 (shadcn/ui pattern, lucide, motion, sonner).
   Run: `cd frontend && npm install && npm run dev`.
 
@@ -55,6 +56,15 @@ Nya-AI is the only product.
   dimensions. Keys never committed.
 
 ## Log (newest first)
+
+- **2026-11-03** — Validated against the course's 16-metric SLO matrix (`docs/SLOS.md`, "SLO matrix"
+  sheet, `uv run nya-agent slo`). Built input/output guardrails (`app/agents/guards.py`), rule triage
+  for risk/route/escalation (`app/agents/triage.py`), an Azure nano safety layer OR-ed with the rules
+  (`safety_llm.py`, not yet run), parameterized SQL templates (`app/rag/sql_queries.py`), RBAC probes,
+  and the Ragas/judge/Langfuse scoring (`app/evals/slo.py`). Measured: RBAC 0 violations (after fixing
+  a chat-history cross-account leak), SQL 80%, safety/routing 65–73% on unseen questions (rules
+  generalise badly). Metrics 1–8 and 10 wait for the R1 agent and the Azure key. Case sets in
+  `evals/cases/` (holdout and stress are frozen).
 
 - **2026-11-01** — Backend tidy-up: `app/rag/db.py` renamed `app/rag/tables.py`; data paths live in
   `app/core/paths.py`; `app/api/schemas.py` split into `app/api/schemas/` per router; booking,

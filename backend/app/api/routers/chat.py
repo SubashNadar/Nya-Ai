@@ -32,14 +32,26 @@ def _record_to_schema(row: ChatMessage) -> ChatMessageRecord:
     )
 
 
+def _may_access(db: Session, conversation_id: str, user_id: str | None) -> bool:
+    """A signed-in user's conversation belongs to that user only; a guest conversation to whoever holds its id."""
+    owners = {
+        row[0]
+        for row in db.query(ChatMessage.user_id).filter(ChatMessage.conversation_id == conversation_id).distinct()
+    }
+    owners.discard(None)
+    return not owners or owners == {user_id}
+
+
 @router.post("/message", response_model=ChatMessageOut)
 def send_message(
     payload: ChatMessageIn,
     db: Session = Depends(get_db),
     user: User | None = Depends(get_current_user_optional),
 ) -> ChatMessageOut:
-    conversation_id = payload.conversation_id or uuid.uuid4().hex
     user_id = user.id if user else None
+    conversation_id = payload.conversation_id or uuid.uuid4().hex
+    if not _may_access(db, conversation_id, user_id):
+        conversation_id = uuid.uuid4().hex  # someone else's conversation: start a new one, never append
 
     db.add(
         ChatMessage(
@@ -88,6 +100,8 @@ def get_history(
 ) -> ChatHistoryOut:
     query = db.query(ChatMessage)
     if conversation_id:
+        if not _may_access(db, conversation_id, user.id if user else None):
+            return ChatHistoryOut(messages=[])
         query = query.filter(ChatMessage.conversation_id == conversation_id)
     elif user:
         # No explicit conversation_id: fall back to the authenticated user's most

@@ -41,6 +41,11 @@ dev = [
     "pytest-asyncio>=0.24.0",
     "ruff>=0.7.0",
     "pylint>=3.3.0",
+    "openpyxl>=3.1.5",
+]
+eval = [
+    "langchain-community<0.4",
+    "ragas>=0.3",
 ]
 
 [build-system]

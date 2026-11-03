@@ -64,12 +64,12 @@ def _mark_paid(order: PaymentOrder, booking: Booking, payment_id: str, signature
 
 
 def create_order(db: Session, booking_id: str, method: str, user: User) -> PaymentOrderOut:
+    booking = bookings.get_owned(db, booking_id, user)  # authorize before anything else
     if not get_settings().razorpay_configured:
         raise Unavailable("Payments are not configured")
     if method not in VALID_METHODS:
         raise Invalid("Invalid payment method")
 
-    booking = bookings.get_owned(db, booking_id, user)
     if booking.status != "pending_payment":
         raise BadRequest("Booking is not awaiting payment")
 

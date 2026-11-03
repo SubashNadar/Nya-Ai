@@ -1,4 +1,4 @@
-"""`uv run nya-agent <command>`: fetch, count, setup, ingest, golden, search, status."""
+"""`uv run nya-agent <command>`: fetch, count, setup, ingest, golden, search, status, slo."""
 
 import argparse
 from datetime import date
@@ -25,7 +25,14 @@ def main() -> None:
     s.add_argument("question")
     s.add_argument("--as-of", type=date.fromisoformat, default=None, help="date the law is needed for")
     sub.add_parser("status", help="acts and the last ingestion jobs")
+    from app.evals import run as slo_run
+
+    slo_run.add_parser(sub)
     args = p.parse_args()
+
+    if args.cmd == "slo":
+        slo_run.main(args)
+        return
 
     if args.cmd == "fetch":
         from app.rag.ingest import fetch_act

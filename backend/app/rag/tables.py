@@ -102,9 +102,11 @@ def get_engine(url: str | None = None) -> Engine:
     return create_engine(url or get_settings().VECTOR_DATABASE_URL)
 
 
-def setup(engine: Engine) -> None:
-    with engine.begin() as conn:
-        conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+def setup(engine: Engine, vector: bool = True) -> None:
+    """Create the tables and register the acts. `vector=False` skips pgvector (SQL-only evals)."""
+    if vector:
+        with engine.begin() as conn:
+            conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
     metadata.create_all(engine)
     with engine.begin() as conn:
         for a in ACTS.values():

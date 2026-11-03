@@ -1,0 +1,328 @@
+{
+ "source": "SQL correctness cases: one parameterized template call per golden SQL/hybrid question, with the legal ground truth (not what the starter CSV holds). H44 needs the BSA ingested and is skipped otherwise.",
+ "cases": [
+  {
+   "id": "G16",
+   "template": "replacement",
+   "params": {
+    "old_act": "IPC",
+    "old_section": "420"
+   },
+   "compare": "equal",
+   "expected": [
+    [
+     "BNS",
+     "318(4)"
+    ]
+   ]
+  },
+  {
+   "id": "G17",
+   "template": "replacement",
+   "params": {
+    "old_act": "CrPC",
+    "old_section": "154"
+   },
+   "compare": "equal",
+   "expected": [
+    [
+     "BNSS",
+     "173"
+    ]
+   ]
+  },
+  {
+   "id": "G20",
+   "template": "in_force_from",
+   "params": {
+    "code": "BNS"
+   },
+   "compare": "equal",
+   "expected": "2024-07-01"
+  },
+  {
+   "id": "G23",
+   "template": "new_offences",
+   "params": {
+    "act": "BNS"
+   },
+   "compare": "contains",
+   "expected": [
+    "103(2)",
+    "111",
+    "113",
+    "304"
+   ]
+  },
+  {
+   "id": "G24",
+   "template": "offence",
+   "params": {
+    "act": "BNS",
+    "section": "303(2)"
+   },
+   "compare": "fields",
+   "expected": {
+    "cognizable": true,
+    "bailable": false
+   }
+  },
+  {
+   "id": "G25",
+   "template": "repealed_in",
+   "params": {
+    "year": 2024
+   },
+   "compare": "equal",
+   "expected": [
+    [
+     "CrPC",
+     "BNSS"
+    ],
+    [
+     "IEA",
+     "BSA"
+    ],
+    [
+     "IPC",
+     "BNS"
+    ]
+   ]
+  },
+  {
+   "id": "G26",
+   "template": "acts_in_force_on",
+   "params": {
+    "day": "2024-03-15"
+   },
+   "compare": "contains_not",
+   "expected": {
+    "has": [
+     "IPC"
+    ],
+    "not": [
+     "BNS"
+    ]
+   }
+  },
+  {
+   "id": "G27",
+   "template": "acts_in_force_on",
+   "params": {
+    "day": "2024-08-15"
+   },
+   "compare": "contains_not",
+   "expected": {
+    "has": [
+     "BNS"
+    ],
+    "not": [
+     "IPC"
+    ]
+   }
+  },
+  {
+   "id": "G29",
+   "template": "replacement",
+   "params": {
+    "old_act": "IPC",
+    "old_section": "498A"
+   },
+   "compare": "equal",
+   "expected": [
+    [
+     "BNS",
+     "85"
+    ],
+    [
+     "BNS",
+     "86"
+    ]
+   ]
+  },
+  {
+   "id": "G30",
+   "template": "offence",
+   "params": {
+    "act": "BNS",
+    "section": "318(4)"
+   },
+   "compare": "fields",
+   "expected": {
+    "cognizable": true,
+    "bailable": false
+   }
+  },
+  {
+   "id": "G31",
+   "template": "new_offences",
+   "params": {
+    "act": "BNS"
+   },
+   "compare": "contains",
+   "expected": [
+    "103(2)"
+   ]
+  },
+  {
+   "id": "G32",
+   "template": "replacement",
+   "params": {
+    "old_act": "IEA",
+    "old_section": "65B"
+   },
+   "compare": "equal",
+   "expected": [
+    [
+     "BSA",
+     "63"
+    ]
+   ]
+  },
+  {
+   "id": "G33",
+   "template": "replacement",
+   "params": {
+    "old_act": "IPC",
+    "old_section": "420"
+   },
+   "compare": "equal",
+   "expected": [
+    [
+     "BNS",
+     "318(4)"
+    ]
+   ]
+  },
+  {
+   "id": "G34a",
+   "template": "acts_in_force_on",
+   "params": {
+    "day": "2024-06-30"
+   },
+   "compare": "contains_not",
+   "expected": {
+    "has": [
+     "IPC"
+    ],
+    "not": [
+     "BNS"
+    ]
+   }
+  },
+  {
+   "id": "G34b",
+   "template": "acts_in_force_on",
+   "params": {
+    "day": "2024-07-02"
+   },
+   "compare": "contains_not",
+   "expected": {
+    "has": [
+     "BNSS"
+    ],
+    "not": [
+     "IPC"
+    ]
+   }
+  },
+  {
+   "id": "G35",
+   "template": "new_offences",
+   "params": {
+    "act": "BNS"
+   },
+   "compare": "contains",
+   "expected": [
+    "111"
+   ]
+  },
+  {
+   "id": "H38",
+   "template": "replacement",
+   "params": {
+    "old_act": "IPC",
+    "old_section": "302"
+   },
+   "compare": "equal",
+   "expected": [
+    [
+     "BNS",
+     "103(1)"
+    ]
+   ]
+  },
+  {
+   "id": "H39",
+   "template": "in_force_from",
+   "params": {
+    "code": "BNSS"
+   },
+   "compare": "equal",
+   "expected": "2024-07-01"
+  },
+  {
+   "id": "H40",
+   "template": "acts_in_force_on",
+   "params": {
+    "day": "2024-05-15"
+   },
+   "compare": "contains_not",
+   "expected": {
+    "has": [
+     "IPC"
+    ],
+    "not": [
+     "BNS"
+    ]
+   }
+  },
+  {
+   "id": "H44",
+   "template": "section_count",
+   "params": {
+    "act": "BSA"
+   },
+   "compare": "equal",
+   "expected": 170
+  },
+  {
+   "id": "H45",
+   "template": "acts_in_force_on",
+   "params": {
+    "day": "2024-06-15"
+   },
+   "compare": "contains_not",
+   "expected": {
+    "has": [
+     "IPC"
+    ],
+    "not": [
+     "BNS"
+    ]
+   }
+  }
+ ],
+ "excluded": [
+  {
+   "id": "G18",
+   "why": "no ground-truth count in the golden set yet (needs the official BNS First Schedule)"
+  },
+  {
+   "id": "G19",
+   "why": "no ground-truth list in the golden set yet"
+  },
+  {
+   "id": "G21",
+   "why": "no ground-truth list in the golden set yet"
+  },
+  {
+   "id": "G22",
+   "why": "judgments tables are not built (R3)"
+  },
+  {
+   "id": "G28",
+   "why": "judgments tables are not built (R3)"
+  }
+ ]
+}
