@@ -3,6 +3,13 @@
 Product decisions that the code depends on. Newest first. Older entries came from the app's earlier
 life under another name; the full history is in git.
 
+## Orbit navy theme restored (2026-11-06)
+
+The owner chose to switch back from Sage & Clay to the Orbit navy and brass colours across the app.
+Only colours changed: the theme commits d12d908 and f19d7b8 were reversed for the frontend, and the
+Orbit menu, layout and alignment stayed as they were. New screens (the portal review queue) use the
+same tokens, so they follow the theme.
+
 ## R1 agent graph and APIs (2026-11-06)
 
 - The R1 graph (`backend/app/agents/graph.py`) runs inside the same FastAPI app. `/v1/answer`,

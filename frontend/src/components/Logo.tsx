@@ -1,6 +1,6 @@
-// Nya-AI mark (jade, or clay on dark panels): scales of justice inside a dashed orbit ring, with a satellite dot.
+// Nya-AI mark: scales of justice inside a dashed orbit ring, with a satellite dot.
 export function LogoMark({ size = 38, tone = 'navy' }: { size?: number; tone?: 'navy' | 'brass' }) {
-  const stroke = tone === 'brass' ? '#E0894A' : '#1E6B5C'
+  const stroke = tone === 'brass' ? '#D9B56E' : '#1F3A5F'
   return (
     <svg
       aria-hidden="true"
@@ -30,7 +30,7 @@ export function BrandLockup({ inverted = false }: { inverted?: boolean }) {
           className={`font-display text-[21px] font-semibold leading-none ${inverted ? 'text-brass-soft' : 'text-ink'}`}
         >
           Nya
-          <span className={`font-mono text-[15px] ${inverted ? 'text-brass-glow' : 'text-brass'}`}>·AI</span>
+          <span className={`font-mono text-[15px] ${inverted ? 'text-brass-light' : 'text-brass-dark'}`}>·AI</span>
         </span>
         <span className={`mt-[4px] font-mono text-[10.5px] tracking-[0.12em] ${inverted ? 'text-white/55' : 'text-muted'}`}>
           INDIAN LAW, CITED

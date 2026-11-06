@@ -16,10 +16,10 @@ export function InfoLayout() {
 
   return (
     <div className="min-h-[100dvh] text-ink">
-      <header className="sticky top-0 z-20 border-b border-line bg-surface/80 backdrop-blur">
+      <header className="sticky top-0 z-20 border-b border-line bg-navy-950/85 backdrop-blur">
         <div className="mx-auto flex max-w-[1120px] flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 md:px-8">
           <Link to={back.to} aria-label="Nya-AI home">
-            <BrandLockup />
+            <BrandLockup inverted />
           </Link>
           <nav aria-label="Information pages" className="order-3 flex w-full gap-1 overflow-x-auto md:order-none md:w-auto">
             {LINKS.map((l) => (
@@ -28,7 +28,7 @@ export function InfoLayout() {
                 to={l.to}
                 className={({ isActive }) =>
                   `rounded-md px-3 py-1.5 font-mono text-[11.5px] tracking-[0.12em] transition-colors ${
-                    isActive ? 'bg-primary-tint text-primary' : 'text-muted hover:text-ink'
+                    isActive ? 'bg-primary/15 text-primary' : 'text-muted hover:text-ink'
                   }`
                 }
               >

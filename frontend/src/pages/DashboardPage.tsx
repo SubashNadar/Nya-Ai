@@ -34,22 +34,22 @@ export default function DashboardPage() {
 
   return (
     <div className="flex-1 overflow-y-auto px-5 py-7 md:px-8">
-      <div className="relative max-w-[1000px] overflow-hidden rounded-3xl bg-gradient-to-br from-primary-tint via-surface to-brass-soft p-7 text-ink shadow-card md:p-9">
-        <div aria-hidden className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-brass-glow/40 blur-3xl" />
+      <div className="relative max-w-[1000px] overflow-hidden rounded-3xl bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950 p-7 text-white shadow-lift md:p-9">
+        <div aria-hidden className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-brass/25 blur-3xl" />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(28,35,33,0.06)_1px,transparent_0)] [background-size:20px_20px]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.07)_1px,transparent_0)] [background-size:20px_20px]"
         />
         <div className="relative flex flex-col gap-5 md:flex-row md:items-end">
           <div className="flex-1">
             <h1 className="font-display text-[32px] font-semibold leading-tight tracking-[-0.01em] md:text-[40px]">
-              Namaste, <span className="italic text-brass-dark">{firstName}</span>
+              Namaste, <span className="italic text-brass-light">{firstName}</span>
             </h1>
-            <div className="mt-2 text-sm text-muted">Your legal matters, all in one place</div>
+            <div className="mt-2 text-sm text-white/65">Your legal matters, all in one place</div>
           </div>
           <button
             onClick={() => navigate('/chat')}
-            className="inline-flex w-fit items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-[13px] font-bold text-primary-foreground shadow-card transition-transform hover:-translate-y-0.5"
+            className="inline-flex w-fit items-center gap-2 rounded-full bg-gradient-to-b from-brass-light to-brass px-5 py-2.5 text-[13px] font-bold text-navy-950 shadow-card transition-transform hover:-translate-y-0.5"
           >
             <MessageSquareText className="size-4" />
             Ask Nya-AI

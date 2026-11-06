@@ -27,8 +27,8 @@ export function AppShell() {
 
   return (
     <div className="flex h-[100dvh] flex-col overflow-hidden font-body text-ink md:flex-row">
-      <header className="flex h-16 flex-none items-center gap-3.5 border-b border-line bg-surface/80 px-4 backdrop-blur md:hidden">
-        <BrandLockup />
+      <header className="flex h-16 flex-none items-center gap-3.5 border-b border-line bg-navy-950/85 px-4 backdrop-blur md:hidden">
+        <BrandLockup inverted />
       </header>
       <Sidebar unreadThreads={unreadThreads} />
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">

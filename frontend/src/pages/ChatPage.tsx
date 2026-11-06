@@ -120,7 +120,7 @@ function Answer({ m, index, onLawyer }: { m: ChatMessage; index: number; onLawye
   return (
     <motion.article
       {...enter}
-      className="overflow-hidden rounded-2xl border border-brass/35 bg-surface/95 shadow-card"
+      className="overflow-hidden rounded-2xl border border-brass-light/35 bg-surface/95 shadow-card"
     >
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-5 py-3 md:px-6">
         <span className={`${mono} text-brass-light`}>Legal information · not legal advice</span>
@@ -231,7 +231,7 @@ function LawPanel() {
           type="date"
           value={incident}
           onChange={(e) => e.target.value && setIncident(e.target.value)}
-          className="mt-1.5 h-10 w-full rounded-lg border border-input bg-bg px-3 font-mono text-[13px] text-ink"
+          className="mt-1.5 h-10 w-full rounded-lg border border-input bg-bg px-3 font-mono text-[13px] text-ink [color-scheme:dark]"
         />
       </section>
       <section className="rounded-2xl border border-line bg-surface/90 p-4">
@@ -355,7 +355,7 @@ export default function ChatPage() {
                 <motion.div {...enter} className="flex flex-col items-center pt-2 text-center md:pt-10">
                   <LogoMark size={64} tone="brass" />
                   <div className={`${mono} mt-5 text-brass-light`}>Indian law, cited</div>
-                  <h1 className="mt-3 font-display text-[30px] font-semibold leading-tight text-ink md:text-[38px]">
+                  <h1 className="mt-3 font-display text-[30px] font-semibold leading-tight text-brass-soft md:text-[38px]">
                     Namaste! I'm Nya-AI.
                   </h1>
                   <p className="mt-3 max-w-[560px] text-[15px] leading-[1.65] text-body2">
@@ -371,7 +371,7 @@ export default function ChatPage() {
                         onClick={() => send(q.text)}
                         className="group flex items-start gap-3 rounded-2xl border border-line bg-surface/90 p-4 text-left transition-colors hover:border-focus"
                       >
-                        <div className="flex size-9 flex-none items-center justify-center rounded-xl bg-brass-soft text-brass-dark">
+                        <div className="flex size-9 flex-none items-center justify-center rounded-xl bg-soft text-brass-light">
                           <q.icon className="size-[18px]" />
                         </div>
                         <div className="min-w-0">
@@ -417,7 +417,7 @@ export default function ChatPage() {
 
           <div className="flex-none px-4 pb-4 pt-2 md:px-8 md:pb-5">
             <div className="mx-auto w-full max-w-[780px]">
-              <div className="flex items-center gap-2 rounded-2xl border border-brass/45 bg-surface p-2 pl-4 shadow-composer focus-within:border-focus">
+              <div className="flex items-center gap-2 rounded-2xl border border-brass-light/45 bg-surface p-2 pl-4 shadow-composer focus-within:border-focus">
                 <span aria-hidden className="font-mono text-lg text-brass-light">
                   ›
                 </span>

@@ -108,7 +108,7 @@ export default function LegalPage() {
                 To use any of these rights, <Link to="/contact" className="text-primary underline-offset-2 hover:underline">write to us</Link> with the topic “Privacy or data”.
               </p>
             </div>
-            <div className="rounded-xl border border-line bg-bg p-4">
+            <div className="rounded-xl border border-line bg-navy-950/50 p-4">
               <div className="font-mono text-[11px] tracking-[0.12em] text-primary">GRIEVANCE OFFICER</div>
               <div className="mt-2 font-semibold">[OFFICER NAME]</div>
               <div className="font-mono text-[13px] text-body2">[GRIEVANCE EMAIL]</div>

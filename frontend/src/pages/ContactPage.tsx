@@ -15,7 +15,7 @@ const TOPICS: { value: SupportTopic; label: string }[] = [
 ]
 
 const field =
-  'w-full rounded-lg border border-line bg-bg px-3 py-2.5 text-[15px] text-ink placeholder:text-faint focus:border-primary focus:outline-none'
+  'w-full rounded-lg border border-line bg-navy-950/60 px-3 py-2.5 text-[15px] text-ink placeholder:text-faint focus:border-primary focus:outline-none'
 
 export default function ContactPage() {
   const { user } = useAuth()

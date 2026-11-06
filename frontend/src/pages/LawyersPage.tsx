@@ -71,7 +71,7 @@ export default function LawyersPage() {
               <div
                 className="relative h-20"
                 style={{
-                  background: `linear-gradient(135deg, ${lw.avatar_color} 0%, ${lw.avatar_color}cc 55%, #0F2E28 100%)`,
+                  background: `linear-gradient(135deg, ${lw.avatar_color} 0%, ${lw.avatar_color}cc 55%, #0F1E33 100%)`,
                 }}
               >
                 <div

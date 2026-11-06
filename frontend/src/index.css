@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 * {
@@ -18,15 +18,12 @@ body,
 
 body {
   margin: 0;
-  /* Sage & Clay: warm paper with Orbit's faint grid, plus a soft jade and clay wash. */
-  background-color: #f6f4ee;
-  background-image: radial-gradient(60rem 40rem at 100% -10%, rgba(242, 177, 132, 0.18), transparent 60%),
-    radial-gradient(50rem 36rem at -10% 110%, rgba(30, 107, 92, 0.1), transparent 60%),
-    linear-gradient(rgba(30, 107, 92, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(30, 107, 92, 0.05) 1px, transparent 1px);
-  background-size: auto, auto, 40px 40px, 40px 40px;
+  background-color: #0a1424;
+  background-image: linear-gradient(rgba(217, 181, 110, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(217, 181, 110, 0.045) 1px, transparent 1px);
+  background-size: 40px 40px;
   background-attachment: fixed;
-  color: #1c2321;
+  color: #f3f5f9;
   font-family: 'Figtree', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -47,7 +44,7 @@ h6 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d5d0c4;
+  background: #2b3f5c;
   border-radius: 8px;
 }
 
@@ -58,11 +55,10 @@ h6 {
 input:focus,
 textarea:focus,
 select:focus {
-  outline: 2px solid #1e6b5c;
+  outline: 2px solid #d9b56e;
   outline-offset: 1px;
 }
 
 button {
   font-family: inherit;
 }
-

@@ -1,4 +1,10 @@
-# Nya-AI design: Sage & Clay
+# Nya-AI design
+
+**Current theme (2026-11-06): Orbit navy and brass.** The owner chose to restore it. The colour
+tokens are back to the Orbit values in `frontend/tailwind.config.js` (as at b7dbca3), and the layout
+is unchanged. The Sage & Clay notes below are kept for history; they no longer describe the app.
+
+## History: Sage & Clay (2026-10-30 to 2026-11-06)
 
 Replaced the Orbit navy and brass theme on 2026-10-30. The owner found Orbit too aggressive and asked
 for a pleasant palette. Orbit's menu, layout and alignment stay exactly as they were (trace panel,

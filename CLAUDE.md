@@ -13,10 +13,9 @@ Nya-AI is the only product.
 
 1. **UI:** layouts from the Orbit design canvas, https://claude.ai/artifact/QYs5pGyrFcvACgYUWrUp1g
    (every screen has a desktop and a phone board, wired for Play mode). Keep Orbit's menu, layout
-   and alignment exactly. Colours are **Sage & Clay** since 2026-10-30, documented in `docs/DESIGN.md`: warm paper `#F6F4EE`
-   background, jade `#1E6B5C` actions, clay `#E0894A` highlights, Fraunces headings, Figtree body,
-   JetBrains Mono for metadata and citations. The canvas still shows the old navy theme; the app wins
-   on colour. New control styling or behaviour needs the owner's approval first (proposals in
+   and alignment exactly. Colours are **Orbit navy and brass** again since 2026-11-06 (Sage & Clay was
+   used 2026-10-30 to 2026-11-06; see `docs/DESIGN.md`). Fraunces headings, Figtree body, JetBrains
+   Mono for metadata and citations. Tokens live in `frontend/tailwind.config.js`. New control styling or behaviour needs the owner's approval first (proposals in
    `docs/DESIGN.md`).
 2. **Agent plan:** https://claude.ai/artifact/KtuTmzcwCe2aMQqWRtVN29 (LangGraph graph, LlamaIndex
    library, Langfuse observability, per-agent SLOs).
@@ -58,6 +57,9 @@ Nya-AI is the only product.
   dimensions. Keys never committed.
 
 ## Log (newest first)
+
+- **2026-11-06** — The owner chose to restore the Orbit navy and brass colours, replacing Sage & Clay.
+  The frontend theme commits d12d908 and f19d7b8 were reversed; only colours changed, not the layout.
 
 - **2026-11-06** — R1 agent built (`app/agents/graph.py`): guard, temporal, router, statute
   researcher and SQL agent in parallel for hybrid, writer, critic with one retry, advocate review with

@@ -86,7 +86,7 @@ export default function LoginPage() {
           className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:44px_44px] [mask-image:radial-gradient(ellipse_at_top_left,black,transparent_75%)]"
         />
         <div aria-hidden className="pointer-events-none absolute -left-24 top-1/3 h-80 w-80 rounded-full bg-navy-600/50 blur-3xl" />
-        <div aria-hidden className="pointer-events-none absolute -bottom-24 right-0 h-72 w-72 rounded-full bg-brass/30 blur-3xl" />
+        <div aria-hidden className="pointer-events-none absolute -bottom-24 right-0 h-72 w-72 rounded-full bg-brass/25 blur-3xl" />
         <div className="relative">
           <BrandLockup inverted />
         </div>
@@ -96,12 +96,12 @@ export default function LoginPage() {
           transition={{ duration: 0.5, ease: 'easeOut' }}
           className="relative max-w-[460px]"
         >
-          <div className="inline-flex items-center gap-2 rounded-full border border-brass-glow/40 bg-brass-glow/10 px-3 py-1 text-xs font-semibold text-brass-glow">
+          <div className="inline-flex items-center gap-2 rounded-full border border-brass/40 bg-brass/10 px-3 py-1 text-xs font-semibold text-brass-light">
             <Scale className="size-3.5" />
             AI legal assistant for India
           </div>
           <h1 className="mt-5 font-display text-[44px] font-semibold leading-[1.05] tracking-[-0.02em] xl:text-[52px]">
-            Legal help, finally <span className="italic text-brass-glow">within reach.</span>
+            Legal help, finally <span className="italic text-brass-light">within reach.</span>
           </h1>
           <p className="mt-5 text-[16px] leading-[1.7] text-white/70">
             90% of Indians can't afford a lawyer. Ask Nya-AI anything about your rights — free, instant,
@@ -110,7 +110,7 @@ export default function LoginPage() {
           <div className="mt-8 grid grid-cols-3 gap-3">
             {BADGES.map((b) => (
               <div key={b.label} className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-                <b.icon className="size-5 text-brass-glow" />
+                <b.icon className="size-5 text-brass-light" />
                 <div className="mt-3 text-[13px] font-semibold leading-snug text-white/90">{b.label}</div>
               </div>
             ))}
@@ -118,7 +118,7 @@ export default function LoginPage() {
         </motion.div>
         <div className="relative rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
           <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-white/45">
-            <Sparkles className="size-3.5 text-brass-glow" />
+            <Sparkles className="size-3.5 text-brass-light" />
             Ask Nya-AI
           </div>
           <div className="mt-3 ml-auto w-fit rounded-2xl rounded-tr-md bg-white/10 px-3.5 py-2 text-[13px]">
@@ -132,7 +132,7 @@ export default function LoginPage() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-16 flex-none items-center px-6 lg:hidden">
-          <BrandLockup />
+          <BrandLockup inverted />
         </header>
         <div className="flex flex-1 items-center justify-center p-6">
           <motion.div

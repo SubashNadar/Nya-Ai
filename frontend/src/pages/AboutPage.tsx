@@ -63,7 +63,7 @@ export default function AboutPage() {
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           {TEAM.map((t) => (
             <div key={t.initials} className="flex items-center gap-3 rounded-xl border border-line bg-surface/90 p-4">
-              <div className="flex size-11 flex-none items-center justify-center rounded-full bg-gradient-to-br from-brass to-brass-dark font-bold text-white">
+              <div className="flex size-11 flex-none items-center justify-center rounded-full bg-gradient-to-br from-brass-light to-brass-dark font-bold text-navy-950">
                 {t.initials}
               </div>
               <div>
