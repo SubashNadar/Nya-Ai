@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getApiErrorMessage, getLawyerDashboard, respondToBooking } from '../lib/api'
 import { ErrorState, LoadingState } from '../components/states'
+import ReviewQueue from '../components/ReviewQueue'
 import type { Booking, LawyerDashboard } from '../types'
 
 export default function LawyerPortalPage() {
@@ -83,6 +84,8 @@ export default function LawyerPortalPage() {
           <div className="mt-0.5 text-xs text-muted">your share · payout every Friday</div>
         </div>
       </div>
+
+      <ReviewQueue />
 
       <div className="mt-7 font-heading text-lg font-bold">Consultation requests</div>
       <div className="mt-3 flex max-w-[760px] flex-col gap-2.5">

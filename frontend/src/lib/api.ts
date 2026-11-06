@@ -6,6 +6,10 @@ import type {
   ChatMeta,
   ConsultBrief,
   ConsultType,
+  FeedbackIn,
+  FeedbackOut,
+  LibraryOverview,
+  PlanDraft,
   ReviewDecisionIn,
   LawyerDashboard,
   LawyerCard,
@@ -234,6 +238,33 @@ export async function replyToThread(
 
 export async function markThreadRead(id: string): Promise<MessageThread> {
   const { data } = await client.patch(`/messages/threads/${id}/read`)
+  return data
+}
+
+export async function sendAnswerFeedback(payload: FeedbackIn): Promise<FeedbackOut> {
+  const { data } = await client.post('/chat/feedback', payload)
+  return data
+}
+
+// ---------- Consult planner ----------
+
+export async function draftConsultPlan(payload: {
+  conversation_id?: string
+  question?: string
+}): Promise<PlanDraft> {
+  const { data } = await client.post('/plan/draft', payload)
+  return data
+}
+
+// ---------- Law library admin (advocate accounts) ----------
+
+export async function getLibrary(): Promise<LibraryOverview> {
+  const { data } = await client.get('/library/acts')
+  return data
+}
+
+export async function startIngestion(acts: string[]): Promise<{ started: string[] }> {
+  const { data } = await client.post('/library/ingest', { acts })
   return data
 }
 

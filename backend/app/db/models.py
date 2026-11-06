@@ -100,6 +100,21 @@ class AnswerReview(Base):
     decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
+class AnswerFeedback(Base):
+    """Thumbs and "Report this answer" on an AI reply in chat. Sent to Langfuse as `user_feedback`."""
+
+    __tablename__ = "answer_feedback"
+
+    id: Mapped[str] = mapped_column(String(32), primary_key=True, default=gen_id)
+    message_id: Mapped[str] = mapped_column(String(32), ForeignKey("chat_messages.id"), index=True)
+    user_id: Mapped[str | None] = mapped_column(String(32), ForeignKey("users.id"), nullable=True)
+    rating: Mapped[str] = mapped_column(String(4))  # "up" | "down"
+    reason: Mapped[str | None] = mapped_column(String(16), nullable=True)  # wrong|unclear|unsafe|other
+    comment: Mapped[str | None] = mapped_column(Text, nullable=True)
+    trace_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
 class AuditLog(Base):
     """Append-only governance record: escalations, refusals and advocate decisions, with the trace id.
 

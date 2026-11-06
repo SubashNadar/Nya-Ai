@@ -14,8 +14,10 @@ from app.api.routers import (
     chat,
     dashboard,
     lawyers,
+    library,
     messages,
     payments,
+    plan,
     reviews,
     support,
 )
@@ -75,6 +77,8 @@ app.include_router(messages.router, prefix="/api")
 app.include_router(dashboard.router, prefix="/api")
 app.include_router(support.router, prefix="/api")
 app.include_router(reviews.router, prefix="/api")
+app.include_router(plan.router, prefix="/api")
+app.include_router(library.router, prefix="/api")
 app.include_router(agent.router)
 
 

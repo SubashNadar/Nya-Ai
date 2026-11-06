@@ -13,9 +13,11 @@ from app.api.schemas.chat import (
     ChatMessageRecord,
     ChatMeta,
 )
+from app.api.schemas.feedback import FeedbackIn, FeedbackOut
 from app.core.security import get_current_user_optional
 from app.db.models import ChatMessage, User
 from app.db.session import get_db
+from app.services import feedback as feedback_svc
 from app.services.agent import chat_reply, may_access
 
 router = APIRouter(prefix="/chat", tags=["chat"])
@@ -118,3 +120,13 @@ def get_history(
 
     rows = query.order_by(ChatMessage.created_at.asc()).all()
     return ChatHistoryOut(messages=[_record_to_schema(row) for row in rows])
+
+
+@router.post("/feedback", response_model=FeedbackOut, status_code=201)
+def give_feedback(
+    payload: FeedbackIn,
+    db: Session = Depends(get_db),
+    user: User | None = Depends(get_current_user_optional),
+) -> FeedbackOut:
+    """Thumbs or "Report this answer" on an AI reply the caller can see."""
+    return feedback_svc.give(db, payload, user)

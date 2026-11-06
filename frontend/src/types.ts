@@ -194,3 +194,55 @@ export interface SupportOut {
   ref: string
   created_at: string
 }
+
+// ---- Answer feedback, consult planner, law library admin ----
+
+export interface FeedbackIn {
+  message_id: string
+  rating: 'up' | 'down'
+  reason?: 'wrong' | 'unclear' | 'unsafe' | 'other'
+  comment?: string
+}
+
+export interface FeedbackOut {
+  id: string
+  message_id: string
+  rating: 'up' | 'down'
+  reason: string | null
+  created_at: string
+}
+
+export interface PlanDraft {
+  brief: ConsultBrief
+  documents: string[]
+  source: 'rules' | 'model'
+}
+
+export interface IngestionJob {
+  id: number
+  act: string
+  stage: string
+  status: 'running' | 'ok' | 'failed'
+  stats: Record<string, unknown>
+  started_at: string
+  finished_at: string | null
+}
+
+export interface LibraryAct {
+  code: string
+  title: string
+  in_force_from: string
+  repealed_on: string | null
+  replaced_by: string | null
+  sections: number
+  ingested_at: string | null
+  pdf_present: boolean
+  last_job: IngestionJob | null
+}
+
+export interface LibraryOverview {
+  reachable: boolean
+  azure: boolean
+  acts: LibraryAct[]
+  jobs: IngestionJob[]
+}

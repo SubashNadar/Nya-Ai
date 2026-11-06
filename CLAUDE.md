@@ -65,8 +65,12 @@ Nya-AI is the only product.
   library is down. Added `/v1/answer`, `/v1/answer/stream` (SSE), `/v1/review`, `/v1/health`, the
   review queue `/api/reviews`, the `audit_log` and `answer_reviews` tables, `chat_messages.meta_json`,
   and the `nya-agent ask` and `answers` commands. Tested offline with fake tools only: there is no real
-  ingestion or Azure run yet. Not built: answer feedback, consult planner and library admin endpoints,
-  and the portal screen for the queue (new UI, needs the owner's approval). See `docs/DECISIONS.md`.
+  ingestion or Azure run yet. See `docs/DECISIONS.md`.
+- **2026-11-06** — Remaining planned endpoints: `POST /api/chat/feedback` (thumbs/report, Langfuse
+  `user_feedback`, unsafe reports audited), `POST /api/plan/draft` (consult planner, rules or nano),
+  `GET /api/library/acts` and `POST /api/library/ingest` (advocate accounts; checks PDFs, Azure, DB).
+  Lawyer portal now shows "Answers waiting for review" (owner approved). Chat thumbs and plan prefill
+  are in `lib/api.ts` but not yet on screen.
 
 - **2026-11-03** — Validated against the course's 16-metric SLO matrix (`docs/SLOS.md`, "SLO matrix"
   sheet, `uv run nya-agent slo`). Built input/output guardrails (`app/agents/guards.py`), rule triage

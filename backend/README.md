@@ -51,7 +51,8 @@ The API is at `http://localhost:8000/api`, docs at `http://localhost:8000/docs`.
 the keyword rule engine ("basic mode", `meta.mode = "basic"`). Emergencies and refusals still come from
 the agent's rules. The agent is also exposed on its own at `/v1/answer`, `/v1/answer/stream` (server-sent
 events, one per graph node), `/v1/review` and `/v1/health`. Advocates work the review queue at
-`/api/reviews`. Payments use Razorpay test keys;
+`/api/reviews` (shown in the lawyer portal). Also: `/api/chat/feedback` (thumbs and reports),
+`/api/plan/draft` (consult planner) and `/api/library/acts`, `/api/library/ingest` (law library admin). Payments use Razorpay test keys;
 without them the payment endpoints return `503`.
 
 ## Law library
