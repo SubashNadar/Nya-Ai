@@ -167,11 +167,14 @@ def make_nodes(tools: Tools) -> dict[str, Callable]:
 
     def temporal(state: NyaState) -> dict:
         q = state["redacted_question"]
-        day = sql_agent.find_date(q)
+        given = state.get("incident_date")
+        day = given or sql_agent.find_date(q)
         as_of = date.fromisoformat(day) if day else date.today()
         scope = acts_in_force(as_of)
         named = [code for code in ACTS if re.search(rf"\b{code}\b", q, re.IGNORECASE)]
         note = f"law on {as_of.isoformat()}" if day else "no date given, law in force today"
+        if given:
+            note = f"incident date {given}: {note}"
         if not day:
             # Asked about a repealed act by name ("what does IPC 420 say"): show it, and say it is repealed.
             for code in named:

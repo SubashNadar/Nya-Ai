@@ -89,6 +89,7 @@ class Answer(BaseModel):
 
 class NyaState(TypedDict, total=False):
     question: str  # as the user typed it; never sent to a model or a trace
+    incident_date: str | None  # ISO date the user gave for the incident; wins over dates in the text
     history: list[dict]  # earlier turns, [{"role": "user"|"ai", "text": ...}], newest last
     redacted_question: str
     risk: str

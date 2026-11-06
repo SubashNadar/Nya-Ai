@@ -82,11 +82,18 @@ def _after_turn(db: Session, result, conversation_id: str | None, user_id: str |
     return review
 
 
-def answer(db: Session, question: str, conversation_id: str | None, user: User | None, history=None):
+def answer(
+    db: Session,
+    question: str,
+    conversation_id: str | None,
+    user: User | None,
+    history=None,
+    incident_date: str | None = None,
+):
     """One agent turn. Returns (TurnResult, AnswerReview | None, latency in seconds)."""
     thread_id = uuid.uuid4().hex
     start = time.perf_counter()
-    result = _runner().run(question, thread_id, conversation_id, user.id if user else None, history)
+    result = _runner().run(question, thread_id, conversation_id, user.id if user else None, history, incident_date)
     review = _after_turn(db, result, conversation_id, user.id if user else None)
     return result, review, time.perf_counter() - start
 
@@ -121,7 +128,9 @@ def library_reachable() -> bool:
 # ---------- chat ----------
 
 
-def chat_reply(db: Session, message: str, conversation_id: str, user: User | None) -> dict:
+def chat_reply(
+    db: Session, message: str, conversation_id: str, user: User | None, incident_date: str | None = None
+) -> dict:
     """The chat's AI reply: the agent when it can answer, the rule engine ("basic mode") when not.
 
     Emergencies and refusals are decided by rules that need no library or model, so the agent
@@ -135,7 +144,9 @@ def chat_reply(db: Session, message: str, conversation_id: str, user: User | Non
     library_up = time.monotonic() >= _down_until["t"]
     if get_settings().AGENT_ENABLED and (library_up or must_run):
         try:
-            result, review, latency = answer(db, message, conversation_id, user, _history(db, conversation_id))
+            result, review, latency = answer(
+                db, message, conversation_id, user, _history(db, conversation_id), incident_date
+            )
         except Exception:  # noqa: BLE001  # pylint: disable=broad-exception-caught  # rule engine still answers
             logger.exception("agent failed; using the rule engine")
             result = None

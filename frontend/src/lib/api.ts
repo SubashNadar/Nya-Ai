@@ -23,6 +23,7 @@ import type {
   SupportOut,
   User,
   UserDashboard,
+  MattersResponse,
 } from '../types'
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000/api'
@@ -98,6 +99,7 @@ export async function logout(): Promise<void> {
 export async function sendChatMessage(
   message: string,
   conversationId?: string,
+  incidentDate?: string,
 ): Promise<{
   conversation_id: string
   id: string
@@ -110,7 +112,13 @@ export async function sendChatMessage(
   const { data } = await client.post('/chat/message', {
     message,
     conversation_id: conversationId,
+    incident_date: incidentDate || undefined,
   })
+  return data
+}
+
+export async function getMatters(): Promise<MattersResponse> {
+  const { data } = await client.get('/chat/matters')
   return data
 }
 

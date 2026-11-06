@@ -1,13 +1,21 @@
 """Chat questions and history."""
 
-from datetime import datetime
+from datetime import date, datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class ChatMessageIn(BaseModel):
     conversation_id: str | None = None
     message: str
+    incident_date: date | None = None  # when it happened; decides IPC or BNS and starts deadline clocks
+
+    @field_validator("incident_date")
+    @classmethod
+    def not_in_future(cls, value: date | None) -> date | None:
+        if value is not None and value > date.today():
+            raise ValueError("The incident date cannot be in the future.")
+        return value
 
 
 class ChatMeta(BaseModel):

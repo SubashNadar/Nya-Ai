@@ -15,7 +15,8 @@ Nya-AI is the only product.
    (every screen has a desktop and a phone board, wired for Play mode). Keep Orbit's menu, layout
    and alignment exactly. Colours are **Orbit navy and brass** again since 2026-11-06 (Sage & Clay was
    used 2026-10-30 to 2026-11-06; see `docs/DESIGN.md`). Fraunces headings, Figtree body, JetBrains
-   Mono for metadata and citations. Tokens live in `frontend/tailwind.config.js`. New control styling or behaviour needs the owner's approval first (proposals in
+   Mono for metadata and citations. Since 2026-11-06 the menu is the Orbit Dial (logo orb) and the
+   dashboard is the incident timeline with deadline clocks (owner's choice; see `docs/DESIGN.md`). Tokens live in `frontend/tailwind.config.js`. New control styling or behaviour needs the owner's approval first (proposals in
    `docs/DESIGN.md`).
 2. **Agent plan:** https://claude.ai/artifact/KtuTmzcwCe2aMQqWRtVN29 (LangGraph graph, LlamaIndex
    library, Langfuse observability, per-agent SLOs).
@@ -57,6 +58,12 @@ Nya-AI is the only product.
   dimensions. Keys never committed.
 
 ## Log (newest first)
+
+- **2026-11-06** — Orbit Dial menu + Statute Timeline (owner picked from three concepts). Sidebar and
+  phone tab bar replaced by the logo orb menu (`OrbMenu.tsx`). `/dashboard` is now "My matters":
+  incident timeline across 1 July 2024 and deadline clocks. Chat sends `incident_date` (agent
+  temporal node uses it). New `GET /api/chat/matters`, `chat_messages.incident_date`,
+  `app/services/deadlines.py` (NI Act 138(b), RTI 19(1), Consumer Act 69, Limitation Act money claims).
 
 - **2026-11-06** — Motion and controls kit at the owner's request ("trendy controls and animations"):
   spotlight/tilt cards, ripple and glowing buttons, sliding pills, route transitions, staggered lists,

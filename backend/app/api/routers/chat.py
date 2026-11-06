@@ -14,10 +14,12 @@ from app.api.schemas.chat import (
     ChatMeta,
 )
 from app.api.schemas.feedback import FeedbackIn, FeedbackOut
-from app.core.security import get_current_user_optional
+from app.api.schemas.matters import MattersOut
+from app.core.security import get_current_user, get_current_user_optional
 from app.db.models import ChatMessage, User
 from app.db.session import get_db
 from app.services import feedback as feedback_svc
+from app.services import matters as matters_svc
 from app.services.agent import chat_reply, may_access
 
 router = APIRouter(prefix="/chat", tags=["chat"])
@@ -63,10 +65,12 @@ def send_message(
             points="[]",
             citation="",
             cta=False,
+            incident_date=payload.incident_date.isoformat() if payload.incident_date else None,
         )
     )
 
-    answer = chat_reply(db, payload.message, conversation_id, user)
+    incident = payload.incident_date.isoformat() if payload.incident_date else None
+    answer = chat_reply(db, payload.message, conversation_id, user, incident)
     # The static greeting ("cta: false") is rendered client-side and never round-trips
     # through this endpoint, so every real reply generated here sets cta unconditionally
     # true, per the original design spec ("every AI answer after the greeting").
@@ -93,6 +97,12 @@ def send_message(
         cta=ai_message.cta,
         meta=_meta(ai_message.meta_json),
     )
+
+
+@router.get("/matters", response_model=MattersOut)
+def get_matters(db: Session = Depends(get_db), user: User = Depends(get_current_user)) -> MattersOut:
+    """Every question this account asked, newest first, with the deadline clocks they start."""
+    return matters_svc.list_matters(db, user)
 
 
 @router.get("/history", response_model=ChatHistoryOut)

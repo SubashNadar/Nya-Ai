@@ -78,6 +78,8 @@ class ChatMessage(Base):
     # Agent fields as JSON: status, mode (agent|basic), escalation, confidence, route, trace,
     # trace_id, review_id. Null for user messages and rows written before R1.
     meta_json: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # ISO date of the incident the user asked about (user messages only), for the matters timeline.
+    incident_date: Mapped[str | None] = mapped_column(String(10), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 

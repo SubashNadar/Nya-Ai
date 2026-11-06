@@ -74,6 +74,25 @@ and alignment are unchanged; only behaviour and finish were added, in navy and b
 - `MotionConfig reducedMotion="user"` plus a `prefers-reduced-motion` CSS override turn it all off.
 - Screens: `/mnt/project-files/nya-ai/motion-kit/`.
 
+## Orbit Dial menu + Statute Timeline (2026-11-06)
+
+The owner found the menu, chat history and dashboard "very common" and picked, from three concepts
+(https://claude.ai/artifact/4XtQvvZRr8SrAgxN19uRyJ), the mix of the Orbit Dial menu and the Statute
+Timeline. This replaces the Orbit sidebar and phone tab bar; other Orbit layouts stay.
+
+- **Menu** (`components/OrbMenu.tsx`): the logo is an orb in a slim top bar. Tapping it dims the page
+  and fans the sections out along one orbit (Ask, My matters, Advocates, Consultations, Account; for
+  advocates Dashboard, Messages, Profile), with Plus and the info links under it. Esc or a tap outside
+  closes it. The bar shows the current section as "§ NAME".
+- **History** (`components/MattersTimeline.tsx`, `/dashboard`): questions placed by incident date on
+  a line split at 1 July 2024 (IPC/CrPC side, BNS/BNSS/BSA side). Undated questions are chips; the
+  selected one opens its conversation (`/chat?c=<id>`).
+- **Dashboard**: three figures, the timeline, "Clocks running" (limitation periods from
+  `backend/app/services/deadlines.py`, counted from the incident date) and the next consultation.
+- **Chat**: a "When did it happen?" date chip under the composer sends `incident_date`, which sets
+  the law in force for the agent and starts the clocks.
+- Screens: `/mnt/project-files/nya-ai/orbit-dial-timeline/`.
+
 ## Not done yet
 
 - No dark mode. The tokens are plain hex, so a dark mode would first move them to CSS variables.

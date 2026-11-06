@@ -118,8 +118,8 @@ class AgentRunner:
         return TurnResult(answer, thread_id, self._scores(handler, answer), evidence=values.get("evidence", []))
 
     @staticmethod
-    def _input(question: str, history: list[dict] | None) -> dict:
-        return {"question": question, "history": history or []}
+    def _input(question: str, history: list[dict] | None, incident_date: str | None = None) -> dict:
+        return {"question": question, "history": history or [], "incident_date": incident_date}
 
     # ---- entry points ----
 
@@ -130,9 +130,10 @@ class AgentRunner:
         conversation_id: str | None = None,
         user_id: str | None = None,
         history: list[dict] | None = None,
+        incident_date: str | None = None,
     ) -> TurnResult:
         config, handler = self._config(thread_id, conversation_id, user_id)
-        self.graph.invoke(self._input(question, history), config)
+        self.graph.invoke(self._input(question, history, incident_date), config)
         return self._result(config, handler, thread_id)
 
     def stream(

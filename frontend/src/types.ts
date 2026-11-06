@@ -246,3 +246,34 @@ export interface LibraryOverview {
   acts: LibraryAct[]
   jobs: IngestionJob[]
 }
+
+// ---- Matters (GET /api/chat/matters) ----
+
+export type MatterStatus = 'answered' | 'advocate_review' | 'reviewed' | 'lawyer_suggested' | 'emergency' | 'refused'
+
+export interface Matter {
+  conversation_id: string
+  question_id: string
+  question: string
+  asked_at: string
+  incident_date: string | null
+  /** "old" = IPC/CrPC era (before 1 July 2024), "new" = BNS/BNSS/BSA. */
+  code: 'old' | 'new' | null
+  citation: string
+  status: MatterStatus
+}
+
+export interface DeadlineClock {
+  conversation_id: string
+  question: string
+  title: string
+  rule: string
+  starts: string | null
+  due: string | null
+  days_left: number | null
+}
+
+export interface MattersResponse {
+  matters: Matter[]
+  clocks: DeadlineClock[]
+}

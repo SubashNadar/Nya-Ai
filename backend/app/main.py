@@ -35,7 +35,11 @@ async def lifespan(_app: FastAPI):
     Base.metadata.create_all(bind=engine)
     # create_all never adds columns to an existing table; add the ones introduced since the
     # first release so an older dev database keeps working.
-    for table, column in (("bookings", "brief_json"), ("chat_messages", "meta_json")):
+    for table, column in (
+        ("bookings", "brief_json"),
+        ("chat_messages", "meta_json"),
+        ("chat_messages", "incident_date"),
+    ):
         if column not in {c["name"] for c in inspect(engine).get_columns(table)}:
             with engine.begin() as conn:
                 conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {column} TEXT"))

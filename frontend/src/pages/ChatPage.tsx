@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ArrowUp, Briefcase, Check, Copy, FileText, Home, type LucideIcon, Scale, ShieldAlert } from 'lucide-react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { ArrowUp, Briefcase, CalendarDays, Check, Copy, FileText, Home, type LucideIcon, Scale, ShieldAlert, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { LogoMark } from '../components/Logo'
-import { getApiErrorMessage, sendChatMessage } from '../lib/api'
+import { getApiErrorMessage, getChatHistory, sendChatMessage } from '../lib/api'
 import type { ChatMessage } from '../types'
 
 const QUICK_REPLIES: { text: string; topic: string; icon: LucideIcon }[] = [
@@ -204,9 +204,10 @@ function TracePanel({ turn }: { turn: Turn | null }) {
   )
 }
 
-function LawPanel() {
-  const [incident, setIncident] = useState(() => new Date().toISOString().slice(0, 10))
-  const bns = incident >= BNS_FROM
+const todayIso = () => new Date().toISOString().slice(0, 10)
+
+function LawPanel({ incident, setIncident }: { incident: string; setIncident: (d: string) => void }) {
+  const bns = (incident || todayIso()) >= BNS_FROM
   const fmt = (d: string) => d.split('-').reverse().join('.')
   return (
     <aside aria-label="Applicable law" className="hidden w-[300px] flex-none flex-col gap-4 overflow-y-auto border-l border-line p-5 xl:flex">
@@ -231,8 +232,12 @@ function LawPanel() {
           </li>
           <li className="relative">
             <span className="absolute -left-[22px] top-1 size-3 rotate-45 bg-primary" />
-            <div className="font-mono text-[11.5px] text-brass-light">INCIDENT · {fmt(incident)}</div>
-            <div className="mt-0.5 text-[13px] font-semibold">{bns ? 'BNS governs this matter' : 'IPC governs this matter'}</div>
+            <div className="font-mono text-[11.5px] text-brass-light">
+              INCIDENT · {incident ? fmt(incident) : 'NOT SET'}
+            </div>
+            <div className="mt-0.5 text-[13px] font-semibold">
+              {!incident ? 'Law in force today applies' : bns ? 'BNS governs this matter' : 'IPC governs this matter'}
+            </div>
           </li>
         </ol>
         <label htmlFor="incident-date" className="mt-4 block text-[12px] font-semibold text-muted">
@@ -242,7 +247,8 @@ function LawPanel() {
           id="incident-date"
           type="date"
           value={incident}
-          onChange={(e) => e.target.value && setIncident(e.target.value)}
+          max={todayIso()}
+          onChange={(e) => setIncident(e.target.value)}
           className="mt-1.5 h-10 w-full rounded-lg border border-input bg-bg px-3 font-mono text-[13px] text-ink [color-scheme:dark]"
         />
       </section>
@@ -276,6 +282,9 @@ export default function ChatPage() {
   const [typing, setTyping] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [conversationId, setConversationId] = useState<string | undefined>(undefined)
+  const [incident, setIncident] = useState('')
+  const [params] = useSearchParams()
+  const openId = params.get('c')
   const scrollRef = useRef<HTMLDivElement>(null)
   const started = messages.length > 1
 
@@ -283,6 +292,22 @@ export default function ChatPage() {
     if (!started) return
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, typing, started])
+
+  // Opened from the matters timeline: load that conversation.
+  useEffect(() => {
+    if (!openId) return
+    let cancelled = false
+    getChatHistory(openId)
+      .then(({ messages: past }) => {
+        if (cancelled || past.length === 0) return
+        setMessages([GREETING, ...past])
+        setConversationId(openId)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [openId])
 
   async function send(text: string) {
     const msg = text.trim()
@@ -297,7 +322,7 @@ export default function ChatPage() {
     setTyping(true)
     const t0 = performance.now()
     try {
-      const res = await sendChatMessage(msg, conversationId)
+      const res = await sendChatMessage(msg, conversationId, incident || undefined)
       const ms = performance.now() - t0
       setConversationId(res.conversation_id)
       setMessages((prev) => [
@@ -457,6 +482,36 @@ export default function ChatPage() {
                   <ArrowUp className="size-5" />
                 </Button>
               </div>
+              <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5">
+                <label
+                  htmlFor="chat-incident"
+                  className="inline-flex items-center gap-2 rounded-full border border-line bg-surface/80 py-1 pl-3 pr-1 font-mono text-[11px] tracking-[0.08em] text-muted"
+                >
+                  <CalendarDays className="size-3.5 text-brass-light" />
+                  WHEN DID IT HAPPEN?
+                  <input
+                    id="chat-incident"
+                    type="date"
+                    value={incident}
+                    max={todayIso()}
+                    onChange={(e) => setIncident(e.target.value)}
+                    className="rounded-full bg-transparent px-1.5 py-0.5 text-[12px] text-ink [color-scheme:dark]"
+                  />
+                  {incident && (
+                    <button
+                      type="button"
+                      onClick={() => setIncident('')}
+                      aria-label="Clear the incident date"
+                      className="rounded-full p-1 text-faint hover:text-ink"
+                    >
+                      <X className="size-3" />
+                    </button>
+                  )}
+                </label>
+                <span className="font-mono text-[10.5px] tracking-[0.08em] text-faint">
+                  {incident ? (incident >= BNS_FROM ? 'BNS · BNSS · BSA APPLY' : 'IPC · CrPC · EVIDENCE ACT APPLY') : 'SETS WHICH LAW APPLIES + STARTS DEADLINE CLOCKS'}
+                </span>
+              </div>
               <div className="mt-2 flex items-center justify-center gap-1.5 text-center text-[11.5px] text-muted">
                 <ShieldAlert className="size-3.5 flex-none text-warn-text" />
                 Legal information, not legal advice. For your own case, talk to an advocate. Emergency: call 112.
@@ -465,7 +520,7 @@ export default function ChatPage() {
           </div>
         </div>
 
-        <LawPanel />
+        <LawPanel incident={incident} setIncident={setIncident} />
       </div>
     </div>
   )
