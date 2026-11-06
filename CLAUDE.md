@@ -59,6 +59,14 @@ Nya-AI is the only product.
 
 ## Log (newest first)
 
+- **2026-11-06** — Law library screen `/library` (advocates; orb menu "Law library"): readiness checks
+  (pgvector, Azure key, PDFs), the LlamaIndex pipeline stages live from the job rows, acts table with
+  "Ingest selected", and "Test retrieval" via new `POST /api/library/search`, which calls the agent's
+  own `library_search` (LlamaIndex vector + full text fused; exact section numbers only without Azure).
+  `GET /api/library/acts` now reports a reachable but empty database as reachable. The LlamaIndex
+  pgvector tests pass against a real pgvector (9/9). `tests/evals/test_slo.py::test_sql_templates_match_ground_truth`
+  fails whenever Postgres is up but BSA is not ingested (H44 counts BSA sections); expected until ingestion.
+
 - **2026-11-06** — Orbit Dial menu + Statute Timeline (owner picked from three concepts). Sidebar and
   phone tab bar replaced by the logo orb menu (`OrbMenu.tsx`). `/dashboard` is now "My matters":
   incident timeline across 1 July 2024 and deadline clocks. Chat sends `incident_date` (agent

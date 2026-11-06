@@ -6,16 +6,21 @@ in the background; the jobs list shows each stage as `app.rag.tables.Job` writes
 """
 
 import logging
+from datetime import date
 
-from sqlalchemy import select
+from sqlalchemy import inspect, select
 
 from app.agents.llm import azure_configured
-from app.api.schemas.library import IngestionJobOut, IngestOut, LibraryActOut, LibraryOut
+from app.api.schemas.library import IngestionJobOut, IngestOut, LibraryActOut, LibraryOut, SearchHit, SearchOut
 from app.core.paths import RAW_DIR
 from app.rag.acts import ACTS
 from app.services.errors import Invalid, Unavailable
 
 logger = logging.getLogger(__name__)
+
+
+class _Empty(Exception):
+    """The database answered but the law tables do not exist yet."""
 
 
 def _engine():
@@ -36,12 +41,16 @@ def overview() -> LibraryOut:
     reachable = True
     try:
         with _engine().connect() as conn:
+            if not inspect(conn).has_table("acts"):
+                raise _Empty  # reachable, nothing ingested yet
             stored = {r["code"]: r for r in conn.execute(select(tables.acts)).mappings()}
             jobs = list(
                 conn.execute(
                     select(tables.ingestion_jobs).order_by(tables.ingestion_jobs.c.id.desc()).limit(20)
                 ).mappings()
             )
+    except _Empty:
+        pass
     except Exception as e:  # noqa: BLE001  # pylint: disable=broad-exception-caught  # show the acts anyway
         logger.warning("law library not reachable: %s", e)
         reachable = False
@@ -100,3 +109,33 @@ def run_ingest(codes: list[str]) -> None:
 
 def start(codes: list[str]) -> IngestOut:
     return IngestOut(started=check_ingest(codes))
+
+
+def search(query: str, as_of: date | None, acts: list[str]) -> SearchOut:
+    """The same retrieval the agent's statute researcher uses (LlamaIndex hybrid when embeddings are set)."""
+    from app.agents.graph import library_search
+    from app.rag.acts import acts_in_force
+
+    day = as_of or date.today()
+    codes = [c.upper() for c in acts if c.upper() in ACTS] or list(ACTS)
+    scope = acts_in_force(day, codes) or codes
+    evidence, ok = library_search(query, day, codes)
+    hits = [
+        SearchHit(
+            act=e.act,
+            section=e.section,
+            heading=e.heading,
+            text=e.text[:900],
+            page=e.page,
+            score=round(e.score, 4),
+            found_by=e.found_by,
+        )
+        for e in evidence
+    ]
+    return SearchOut(
+        mode="hybrid" if azure_configured() else "exact",
+        library_ok=ok,
+        as_of=day,
+        acts_in_scope=scope,
+        hits=hits,
+    )

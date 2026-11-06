@@ -1,6 +1,6 @@
 """Law library admin: the acts, their section counts and ingestion jobs; start an ingestion run."""
 
-from datetime import datetime
+from datetime import date, datetime
 
 from pydantic import BaseModel, Field
 
@@ -40,3 +40,27 @@ class IngestIn(BaseModel):
 
 class IngestOut(BaseModel):
     started: list[str]
+
+
+class SearchIn(BaseModel):
+    query: str = Field(min_length=2, max_length=500)
+    as_of: date | None = None  # law in force on this day; today when empty
+    acts: list[str] = Field(default_factory=lambda: ["BNS", "BNSS", "BSA", "IPC"], max_length=4)
+
+
+class SearchHit(BaseModel):
+    act: str
+    section: str
+    heading: str
+    text: str
+    page: str | None
+    score: float
+    found_by: str  # "exact" (section number) or "hybrid" (vector + full text, fused)
+
+
+class SearchOut(BaseModel):
+    mode: str  # "hybrid" with Azure embeddings, "exact" (section numbers only) without
+    library_ok: bool
+    as_of: date
+    acts_in_scope: list[str]
+    hits: list[SearchHit]

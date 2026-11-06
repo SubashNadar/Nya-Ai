@@ -24,6 +24,7 @@ import type {
   User,
   UserDashboard,
   MattersResponse,
+  LibrarySearch,
 } from '../types'
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000/api'
@@ -273,6 +274,11 @@ export async function getLibrary(): Promise<LibraryOverview> {
 
 export async function startIngestion(acts: string[]): Promise<{ started: string[] }> {
   const { data } = await client.post('/library/ingest', { acts })
+  return data
+}
+
+export async function searchLibrary(query: string, asOf?: string): Promise<LibrarySearch> {
+  const { data } = await client.post('/library/search', { query, as_of: asOf || undefined })
   return data
 }
 

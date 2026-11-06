@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, BackgroundTasks, Depends, status
 
-from app.api.schemas.library import IngestIn, IngestOut, LibraryOut
+from app.api.schemas.library import IngestIn, IngestOut, LibraryOut, SearchIn, SearchOut
 from app.core.security import require_lawyer
 from app.db.models import User
 from app.services import library as svc
@@ -21,3 +21,9 @@ def ingest(payload: IngestIn, background: BackgroundTasks, _: User = Depends(req
     out = svc.start(payload.acts)
     background.add_task(svc.run_ingest, out.started)
     return out
+
+
+@router.post("/search", response_model=SearchOut)
+def search(payload: SearchIn, _: User = Depends(require_lawyer)) -> SearchOut:
+    """Try a question against the library: the sections the agent would retrieve, with scores."""
+    return svc.search(payload.query, payload.as_of, payload.acts)

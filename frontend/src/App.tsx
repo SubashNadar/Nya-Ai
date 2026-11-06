@@ -21,6 +21,7 @@ import ContactPage from './pages/ContactPage'
 import HelpPage from './pages/HelpPage'
 import ConsultPlanPage from './pages/ConsultPlanPage'
 import CallPage from './pages/CallPage'
+import LibraryPage from './pages/LibraryPage'
 
 function homeFor(role: 'user' | 'lawyer' | undefined) {
   return role === 'lawyer' ? '/portal' : '/chat'
@@ -175,6 +176,14 @@ export default function App() {
           element={
             <RequireRole role="lawyer">
               <LawyerProfilePage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/library"
+          element={
+            <RequireRole role="lawyer">
+              <LibraryPage />
             </RequireRole>
           }
         />

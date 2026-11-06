@@ -65,3 +65,33 @@ def test_library_admin_is_for_advocates_and_reports_what_is_missing(client):
     started = client.post("/api/library/ingest", json={"acts": ["BNS"]}, headers=advocate)
     assert started.status_code == 503  # no Azure here, so nothing starts
     assert client.post("/api/library/ingest", json={"acts": ["XYZ"]}, headers=advocate).status_code == 422
+
+
+def test_library_search_is_for_advocates_and_uses_the_agent_retriever(client, monkeypatch):
+    from app.agents import graph
+    from app.rag.retrieve import Evidence
+
+    user = _login(client, "9000000207")
+    body = {"query": "punishment for theft", "as_of": "2024-03-12"}
+    assert client.post("/api/library/search", json=body, headers=user).status_code == 403
+    advocate = _login(client, "1234567890", role="lawyer")
+    seen = {}
+
+    def fake_search(question, as_of, acts):
+        seen.update(question=question, as_of=as_of, acts=acts)
+        hit = Evidence(
+            act="IPC",
+            section="379",
+            heading="Punishment for theft",
+            text="Whoever commits theft...",
+            score=0.81,
+            found_by="hybrid",
+        )
+        return [hit], True
+
+    monkeypatch.setattr(graph, "library_search", fake_search)
+    out = client.post("/api/library/search", json=body, headers=advocate).json()
+    assert out["library_ok"] is True and out["mode"] == "exact"  # no Azure key in tests
+    assert out["acts_in_scope"] == ["IPC"]  # on 12 Mar 2024 only the IPC of the criminal codes was in force
+    assert out["hits"][0]["section"] == "379"
+    assert str(seen["as_of"]) == "2024-03-12"

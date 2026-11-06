@@ -277,3 +277,24 @@ export interface MattersResponse {
   matters: Matter[]
   clocks: DeadlineClock[]
 }
+
+// ---- Library retrieval test (POST /api/library/search) ----
+
+export interface LibraryHit {
+  act: string
+  section: string
+  heading: string
+  text: string
+  page: string | null
+  score: number
+  /** "exact" = matched a section number; "hybrid" = LlamaIndex vector + full-text, fused. */
+  found_by: 'exact' | 'hybrid'
+}
+
+export interface LibrarySearch {
+  mode: 'hybrid' | 'exact'
+  library_ok: boolean
+  as_of: string
+  acts_in_scope: string[]
+  hits: LibraryHit[]
+}

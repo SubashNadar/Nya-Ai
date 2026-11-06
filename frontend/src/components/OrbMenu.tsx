@@ -4,6 +4,7 @@ import {
   CalendarCheck,
   CircleUserRound,
   GitCommitHorizontal,
+  LibraryBig,
   LayoutDashboard,
   LogOut,
   type LucideIcon,
@@ -30,6 +31,7 @@ function useSatellites(unreadThreads: number): Satellite[] {
     return [
       { label: 'Dashboard', path: '/portal', match: ['/portal', '/call'], icon: LayoutDashboard },
       { label: 'Messages', path: '/messages', match: ['/messages'], icon: MessagesSquare, badge: unreadThreads },
+      { label: 'Law library', path: '/library', match: ['/library'], icon: LibraryBig },
       { label: 'Profile', path: '/profile', match: ['/profile'], icon: UserRound },
     ]
   }
