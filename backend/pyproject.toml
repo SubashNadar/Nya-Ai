@@ -30,6 +30,7 @@ dependencies = [
     "psycopg2-binary>=2.9.13",
     "psycopg[binary]>=3.3.6",
     "pypdf>=6.21.4",
+    "langgraph-checkpoint-sqlite>=3.0",
 ]
 
 [project.scripts]

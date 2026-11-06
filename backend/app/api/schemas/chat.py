@@ -10,6 +10,21 @@ class ChatMessageIn(BaseModel):
     message: str
 
 
+class ChatMeta(BaseModel):
+    """How the reply was made. `mode` is "agent" (R1 graph) or "basic" (rule engine fallback)."""
+
+    mode: str = "basic"
+    status: str | None = None
+    escalation: str | None = None
+    risk: str | None = None
+    route: str | None = None
+    confidence: float | None = None
+    confidence_label: str | None = None
+    trace: list[str] = []
+    trace_id: str | None = None
+    review_id: str | None = None
+
+
 class ChatMessageOut(BaseModel):
     conversation_id: str
     id: str
@@ -17,6 +32,7 @@ class ChatMessageOut(BaseModel):
     points: list[str]
     citation: str
     cta: bool
+    meta: ChatMeta | None = None
 
 
 class ChatMessageRecord(BaseModel):
@@ -28,6 +44,7 @@ class ChatMessageRecord(BaseModel):
     points: list[str]
     citation: str
     cta: bool
+    meta: ChatMeta | None = None
     created_at: datetime
 
 

@@ -75,6 +75,48 @@ class ChatMessage(Base):
     points: Mapped[str] = mapped_column(Text, default="[]")  # JSON-encoded list[str]
     citation: Mapped[str] = mapped_column(String(200), default="")
     cta: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Agent fields as JSON: status, mode (agent|basic), escalation, confidence, route, trace,
+    # trace_id, review_id. Null for user messages and rows written before R1.
+    meta_json: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class AnswerReview(Base):
+    """A drafted answer held for an advocate (the graph's `interrupt()`), keyed by the run's thread id."""
+
+    __tablename__ = "answer_reviews"
+
+    id: Mapped[str] = mapped_column(String(32), primary_key=True, default=gen_id)
+    thread_id: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    conversation_id: Mapped[str | None] = mapped_column(String(32), index=True, nullable=True)
+    user_id: Mapped[str | None] = mapped_column(String(32), ForeignKey("users.id"), nullable=True)
+    question: Mapped[str] = mapped_column(Text)  # redacted, as the graph saw it
+    draft_json: Mapped[str] = mapped_column(Text)  # the writer's draft and the critic's check
+    status: Mapped[str] = mapped_column(String(12), default="pending", index=True)  # pending|approved|edited|rejected
+    decided_by: Mapped[str | None] = mapped_column(String(32), ForeignKey("lawyers.id"), nullable=True)
+    final_json: Mapped[str | None] = mapped_column(Text, nullable=True)
+    trace_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class AuditLog(Base):
+    """Append-only governance record: escalations, refusals and advocate decisions, with the trace id.
+
+    Rows are only ever inserted (app.services.audit.record); nothing updates or deletes them.
+    """
+
+    __tablename__ = "audit_log"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    event: Mapped[str] = mapped_column(
+        String(32), index=True
+    )  # emergency|refused|offer_lawyer|review_queued|review_decided
+    conversation_id: Mapped[str | None] = mapped_column(String(32), index=True, nullable=True)
+    thread_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    actor: Mapped[str] = mapped_column(String(48))  # "agent" or "lawyer:<lawyer id>"
+    detail_json: Mapped[str] = mapped_column(Text, default="{}")
+    trace_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 

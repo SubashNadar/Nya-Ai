@@ -8,12 +8,11 @@ only go up.
 """
 
 import json
-import logging
 
+from app.agents.llm import azure_chat
 from app.agents.triage import Triage
-from app.core.config import get_settings
 
-logger = logging.getLogger(__name__)
+__all__ = ["azure_chat", "classify", "combine"]
 
 RISK_ORDER = ["Low", "Medium", "High", "Critical"]
 ESCALATION_ORDER = ["none", "offer_lawyer", "advocate_review", "refused", "emergency"]
@@ -37,27 +36,6 @@ document_authenticity (judging whether the user's document is genuine or valid),
 route: none (emergency or refused), sql (lookups: replaced sections, dates in force, counts, lists,
 bailable/cognizable, finding a lawyer), rag (what a section says), hybrid (both, or incident dates).
 When unsure between two risk levels, choose the higher."""
-
-
-def azure_chat(messages: list[dict], deployment: str | None = None, json_mode: bool = False) -> str | None:
-    """One Azure OpenAI chat completion, or None when Azure is not configured or the call fails."""
-    s = get_settings()
-    if not (s.AZURE_OPENAI_ENDPOINT and s.AZURE_OPENAI_API_KEY):
-        return None
-    try:
-        from openai import AzureOpenAI
-
-        client = AzureOpenAI(
-            azure_endpoint=s.AZURE_OPENAI_ENDPOINT,
-            api_key=s.AZURE_OPENAI_API_KEY,
-            api_version=s.AZURE_OPENAI_API_VERSION,
-        )
-        extra = {"response_format": {"type": "json_object"}} if json_mode else {}
-        r = client.chat.completions.create(model=deployment or s.AZURE_SMALL_DEPLOYMENT, messages=messages, **extra)
-        return r.choices[0].message.content
-    except Exception:  # noqa: BLE001  # pylint: disable=broad-exception-caught  # rules still apply
-        logger.exception("Azure chat call failed")
-        return None
 
 
 def classify(question: str) -> dict | None:

@@ -1,4 +1,4 @@
-"""Chat endpoints: rule-engine / Claude-backed AI answers, conversation history."""
+"""Chat endpoints: answers from the R1 agent (rule engine in basic mode), conversation history."""
 
 import json
 import uuid
@@ -11,11 +11,12 @@ from app.api.schemas.chat import (
     ChatMessageIn,
     ChatMessageOut,
     ChatMessageRecord,
+    ChatMeta,
 )
 from app.core.security import get_current_user_optional
 from app.db.models import ChatMessage, User
 from app.db.session import get_db
-from app.services.chat_engine import get_answer
+from app.services.agent import chat_reply, may_access
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -28,18 +29,16 @@ def _record_to_schema(row: ChatMessage) -> ChatMessageRecord:
         points=json.loads(row.points),
         citation=row.citation,
         cta=row.cta,
+        meta=_meta(row.meta_json),
         created_at=row.created_at,
     )
 
 
-def _may_access(db: Session, conversation_id: str, user_id: str | None) -> bool:
-    """A signed-in user's conversation belongs to that user only; a guest conversation to whoever holds its id."""
-    owners = {
-        row[0]
-        for row in db.query(ChatMessage.user_id).filter(ChatMessage.conversation_id == conversation_id).distinct()
-    }
-    owners.discard(None)
-    return not owners or owners == {user_id}
+def _meta(raw: str | None) -> ChatMeta | None:
+    if not raw:
+        return None
+    data = json.loads(raw)
+    return ChatMeta(**{k: v for k, v in data.items() if k in set(ChatMeta.model_fields)})
 
 
 @router.post("/message", response_model=ChatMessageOut)
@@ -50,7 +49,7 @@ def send_message(
 ) -> ChatMessageOut:
     user_id = user.id if user else None
     conversation_id = payload.conversation_id or uuid.uuid4().hex
-    if not _may_access(db, conversation_id, user_id):
+    if not may_access(db, conversation_id, user_id):
         conversation_id = uuid.uuid4().hex  # someone else's conversation: start a new one, never append
 
     db.add(
@@ -65,7 +64,7 @@ def send_message(
         )
     )
 
-    answer = get_answer(payload.message)
+    answer = chat_reply(db, payload.message, conversation_id, user)
     # The static greeting ("cta: false") is rendered client-side and never round-trips
     # through this endpoint, so every real reply generated here sets cta unconditionally
     # true, per the original design spec ("every AI answer after the greeting").
@@ -77,6 +76,7 @@ def send_message(
         points=json.dumps(answer["points"]),
         citation=answer["citation"],
         cta=True,
+        meta_json=json.dumps(answer["meta"]),
     )
     db.add(ai_message)
     db.commit()
@@ -89,6 +89,7 @@ def send_message(
         points=answer["points"],
         citation=ai_message.citation,
         cta=ai_message.cta,
+        meta=_meta(ai_message.meta_json),
     )
 
 
@@ -100,7 +101,7 @@ def get_history(
 ) -> ChatHistoryOut:
     query = db.query(ChatMessage)
     if conversation_id:
-        if not _may_access(db, conversation_id, user.id if user else None):
+        if not may_access(db, conversation_id, user.id if user else None):
             return ChatHistoryOut(messages=[])
         query = query.filter(ChatMessage.conversation_id == conversation_id)
     elif user:

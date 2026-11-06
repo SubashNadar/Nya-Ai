@@ -10,9 +10,10 @@ backend/
   docker-compose.yml     Postgres + pgvector (5433) and self-hosted Langfuse (3000)
   app/
     main.py              FastAPI app: CORS, routers, startup seed
-    cli.py               `uv run nya-agent ...`: fetch, count, setup, ingest, golden, search, status
+    cli.py               `uv run nya-agent ...`: fetch, count, setup, ingest, golden, search, status, ask, answers, slo
     api/
-      routers/           HTTP only: auth, chat, lawyers, bookings, payments, dashboard, messages, support
+      routers/           HTTP only: auth, chat, lawyers, bookings, payments, dashboard, messages, support,
+                         reviews (advocate queue), agent (/v1)
       schemas/           request and response models, one module per router: the API contract
     core/
       config.py          settings for the API and the agents, from .env
@@ -22,8 +23,10 @@ backend/
     db/                  app database (SQLite in dev): session.py, models.py, seed.py
     services/            business rules the routers call; raise errors.py exceptions, not HTTP ones
       bookings.py, payments.py (Razorpay), dashboard.py, lawyers.py
-      chat_engine.py     keyword rule engine, the fallback until the agents answer
-    agents/              LangGraph graph and its nodes (release R1)
+      agent.py           runs agent turns for chat and /v1, queues advocate reviews, writes audit_log
+      chat_engine.py     keyword rule engine: the basic-mode fallback
+    agents/              R1: graph.py (LangGraph nodes and wiring), runner.py (checkpoints, Langfuse, stream,
+                         resume), sql_agent.py, guards.py, triage.py, safety_llm.py, llm.py (Azure)
     rag/                 law library: parser, ingest, index (pgvector), retrieve (hybrid), acts, tables (SQL tables)
     evals/               golden-set check; Ragas and SLO scores next (../docs/SLOS.md)
   data/                  SOURCES.md, section_map.csv; PDFs go in data/raw/ (not committed)
@@ -43,9 +46,12 @@ uv run uvicorn app.main:app --reload --port 8000
 ```
 
 The API is at `http://localhost:8000/api`, docs at `http://localhost:8000/docs`. A local
-`nya_ai.db` SQLite file is created and seeded on first boot. Chat answers come from the keyword rule
-engine until the agents in `app/agents/` replace `chat_engine.get_answer`; with `ANTHROPIC_API_KEY`
-set it calls the Claude API and falls back to the rules on error. Payments use Razorpay test keys;
+`nya_ai.db` SQLite file is created and seeded on first boot. Chat answers come from the R1 agent graph
+(`app/agents/graph.py`). When the law library (Postgres) isn't reachable, ordinary questions fall back to
+the keyword rule engine ("basic mode", `meta.mode = "basic"`). Emergencies and refusals still come from
+the agent's rules. The agent is also exposed on its own at `/v1/answer`, `/v1/answer/stream` (server-sent
+events, one per graph node), `/v1/review` and `/v1/health`. Advocates work the review queue at
+`/api/reviews`. Payments use Razorpay test keys;
 without them the payment endpoints return `503`.
 
 ## Law library
@@ -61,6 +67,8 @@ uv run nya-agent ingest         # BNS BNSS BSA IPC
 uv run nya-agent golden ../../legal-docs-platform/evals/GOLDEN-QUERIES.md
 uv run nya-agent search "My phone was stolen in March 2024" --as-of 2024-03-12
 uv run nya-agent status
+uv run nya-agent ask "Which BNS section replaced IPC 420?"   # one question through the graph, with its trace
+uv run nya-agent answers --out run.jsonl                     # golden + holdout answers for `slo --answers`
 ```
 
 What the library does: one node per section (`SectionNodeParser`, explanations and illustrations

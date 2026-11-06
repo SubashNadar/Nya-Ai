@@ -3,6 +3,30 @@
 Product decisions that the code depends on. Newest first. Older entries came from the app's earlier
 life under another name; the full history is in git.
 
+## R1 agent graph and APIs (2026-11-06)
+
+- The R1 graph (`backend/app/agents/graph.py`) runs inside the same FastAPI app. `/v1/answer`,
+  `/v1/answer/stream`, `/v1/review` and `/v1/health` are mounted next to `/api`, and the chat calls
+  the agent in process (`app/services/agent.py`), not over HTTP. One service is simpler to run for the
+  capstone; the `/v1` routes keep the boundary, so it can be split out later.
+- Each chat turn is its own graph run (`thread_id` = a new id per turn). Chat memory comes from the
+  app's `chat_messages` table as `history`. A run paused for advocate review then can't be overwritten
+  by the user's next question. Langfuse groups turns by `conversation_id`.
+- The checkpointer is SQLite (`CHECKPOINT_DB`, default `backend/nya_graph.db`), so a held answer
+  survives a restart without any setup. This replaces "checkpointer in Postgres" above. Moving it to
+  Postgres needs `langgraph-checkpoint-postgres` and no graph changes.
+- Basic mode: when the law library can't be reached (or `AGENT_ENABLED=false`), ordinary questions
+  get the rule engine, and `meta.mode` is `basic`. Emergencies and refusals still go through the
+  agent, because they need only rules.
+- Without Azure, the writer builds an extractive answer from the retrieved sections, and retrieval
+  looks sections up by number. With Azure, the writer is gpt-5.4-nano, with gpt-5.4 on the critic's
+  one retry. Hybrid search and the safety classifier turn on too.
+- The advocate review queue is `/api/reviews` (list, get, decide). A decision resumes the paused run
+  with `Command(resume=...)`, posts the reviewed answer into the user's chat, and writes `audit_log`.
+  `audit_log` is append-only and records escalations, refusals, review queued and review decided,
+  with the trace id. There is no portal screen for the queue yet: that is new UI and needs the
+  owner's approval.
+
 ## Data access: MCP for law data only (2026-11-01)
 
 - MCP tools are read-only and reach only law data: the bare-act text, the vector index and the law

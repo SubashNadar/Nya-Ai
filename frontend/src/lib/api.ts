@@ -1,9 +1,12 @@
 import axios, { type AxiosInstance } from 'axios'
 import type {
+  AnswerReview,
   Booking,
   ChatMessage,
+  ChatMeta,
   ConsultBrief,
   ConsultType,
+  ReviewDecisionIn,
   LawyerDashboard,
   LawyerCard,
   LawyerDetail,
@@ -98,6 +101,7 @@ export async function sendChatMessage(
   points: string[]
   citation: string
   cta: boolean
+  meta?: ChatMeta | null
 }> {
   const { data } = await client.post('/chat/message', {
     message,
@@ -230,6 +234,25 @@ export async function replyToThread(
 
 export async function markThreadRead(id: string): Promise<MessageThread> {
   const { data } = await client.patch(`/messages/threads/${id}/read`)
+  return data
+}
+
+// ---------- Advocate review queue (lawyer portal) ----------
+
+export async function getReviews(
+  status: 'pending' | 'approved' | 'edited' | 'rejected' = 'pending',
+): Promise<{ reviews: AnswerReview[] }> {
+  const { data } = await client.get('/reviews', { params: { status } })
+  return data
+}
+
+export async function getReview(id: string): Promise<AnswerReview> {
+  const { data } = await client.get(`/reviews/${id}`)
+  return data
+}
+
+export async function decideReview(id: string, payload: ReviewDecisionIn): Promise<AnswerReview> {
+  const { data } = await client.post(`/reviews/${id}`, payload)
   return data
 }
 

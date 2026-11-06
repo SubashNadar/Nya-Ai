@@ -8,6 +8,28 @@ export interface User {
   phone: string | null
 }
 
+/** How an AI reply was made: "agent" (R1 graph) or "basic" (rule-engine fallback). */
+export interface ChatMeta {
+  mode: 'agent' | 'basic'
+  status:
+    | 'answered'
+    | 'pending_review'
+    | 'reviewed'
+    | 'rejected'
+    | 'emergency'
+    | 'refused'
+    | 'no_evidence'
+    | null
+  escalation: 'none' | 'offer_lawyer' | 'advocate_review' | 'emergency' | 'refused' | null
+  risk: string | null
+  route: 'none' | 'rag' | 'sql' | 'hybrid' | null
+  confidence: number | null
+  confidence_label: 'High' | 'Medium' | 'Low' | null
+  trace: string[]
+  trace_id: string | null
+  review_id: string | null
+}
+
 export interface ChatMessage {
   id: string
   role: 'user' | 'ai'
@@ -15,7 +37,38 @@ export interface ChatMessage {
   points: string[]
   citation: string
   cta: boolean
+  meta?: ChatMeta | null
   created_at: string
+}
+
+export type ReviewDecision = 'approved' | 'edited' | 'rejected'
+
+/** An answer the agent holds for a verified advocate (lawyer portal review queue). */
+export interface AnswerReview {
+  id: string
+  thread_id: string
+  conversation_id: string | null
+  question: string
+  draft: {
+    text: string
+    points: string[]
+    citations: { act: string; section: string; heading: string }[]
+    model: string
+  } | null
+  critique: { verdict: string; confidence: number; confidence_label: string } | null
+  status: 'pending' | ReviewDecision
+  decided_by: string | null
+  final: Record<string, unknown> | null
+  trace_id: string | null
+  created_at: string
+  decided_at: string | null
+}
+
+export interface ReviewDecisionIn {
+  decision: ReviewDecision
+  text?: string
+  points?: string[]
+  note?: string
 }
 
 export interface LawyerCard {

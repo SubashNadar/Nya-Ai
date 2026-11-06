@@ -40,7 +40,9 @@ Nya-AI is the only product.
     retrieval with act/date filters, SQL tables. CLI `uv run nya-agent ...` (`app/cli.py`).
     `docker compose up -d` in `backend/` starts pgvector (5433) and Langfuse (3000). PDFs go in
     `backend/data/raw/` (gitignored).
-  - `app/agents/` — guardrails, triage, model safety layer; LangGraph graph (R1) not started.
+  - `app/agents/` — guardrails, triage, model safety layer and the R1 LangGraph graph (`graph.py`,
+    `runner.py`, `sql_agent.py`). Chat calls it through `app/services/agent.py`; `/v1/*` exposes it;
+    `/api/reviews` is the advocate queue; `audit_log` is the governance record.
     `app/evals/` — golden check, SLO runner (`nya-agent slo`), RBAC probes, Ragas and judge scoring.
 - `frontend/` — Vite + React + TypeScript + Tailwind 3 (shadcn/ui pattern, lucide, motion, sonner).
   Run: `cd frontend && npm install && npm run dev`.
@@ -56,6 +58,15 @@ Nya-AI is the only product.
   dimensions. Keys never committed.
 
 ## Log (newest first)
+
+- **2026-11-06** — R1 agent built (`app/agents/graph.py`): guard, temporal, router, statute
+  researcher and SQL agent in parallel for hybrid, writer, critic with one retry, advocate review with
+  `interrupt()`. `/api/chat/message` now answers from it, with the rule engine as basic mode when the
+  library is down. Added `/v1/answer`, `/v1/answer/stream` (SSE), `/v1/review`, `/v1/health`, the
+  review queue `/api/reviews`, the `audit_log` and `answer_reviews` tables, `chat_messages.meta_json`,
+  and the `nya-agent ask` and `answers` commands. Tested offline with fake tools only: there is no real
+  ingestion or Azure run yet. Not built: answer feedback, consult planner and library admin endpoints,
+  and the portal screen for the queue (new UI, needs the owner's approval). See `docs/DECISIONS.md`.
 
 - **2026-11-03** — Validated against the course's 16-metric SLO matrix (`docs/SLOS.md`, "SLO matrix"
   sheet, `uv run nya-agent slo`). Built input/output guardrails (`app/agents/guards.py`), rule triage

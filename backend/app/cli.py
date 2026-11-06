@@ -1,4 +1,4 @@
-"""`uv run nya-agent <command>`: fetch, count, setup, ingest, golden, search, status, slo."""
+"""`uv run nya-agent <command>`: fetch, count, setup, ingest, golden, search, status, ask, answers, slo."""
 
 import argparse
 from datetime import date
@@ -25,6 +25,13 @@ def main() -> None:
     s.add_argument("question")
     s.add_argument("--as-of", type=date.fromisoformat, default=None, help="date the law is needed for")
     sub.add_parser("status", help="acts and the last ingestion jobs")
+    ask = sub.add_parser("ask", help="run one question through the R1 agent graph and print its trace")
+    ask.add_argument("question")
+    ans = sub.add_parser(
+        "answers", help="run the golden and held-out questions through the graph (for `slo --answers`)"
+    )
+    ans.add_argument("--splits", nargs="*", default=["golden", "holdout"])
+    ans.add_argument("--out", type=Path, default=Path("run.jsonl"))
     from app.evals import run as slo_run
 
     slo_run.add_parser(sub)
@@ -32,6 +39,26 @@ def main() -> None:
 
     if args.cmd == "slo":
         slo_run.main(args)
+        return
+
+    if args.cmd == "ask":
+        import uuid
+
+        from app.agents.runner import AgentRunner
+
+        r = AgentRunner().run(args.question, uuid.uuid4().hex)
+        for line in r.answer.trace:
+            print(f"  {line}")
+        print(f"\n[{r.answer.status}] {r.answer.text}")
+        for point in r.answer.points:
+            print(f"  - {point}")
+        print(r.answer.citation_line)
+        return
+    if args.cmd == "answers":
+        from app.evals.answers import run_answers
+
+        n = run_answers(args.splits, args.out)
+        print(f"{n} answers written to {args.out}; score them with `nya-agent slo --answers {args.out}`")
         return
 
     if args.cmd == "fetch":

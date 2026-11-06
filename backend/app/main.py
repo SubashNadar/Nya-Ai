@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import inspect, text
 
 from app.api.routers import (
+    agent,
     auth,
     bookings,
     chat,
@@ -15,6 +16,7 @@ from app.api.routers import (
     lawyers,
     messages,
     payments,
+    reviews,
     support,
 )
 from app.core.config import get_settings
@@ -31,9 +33,10 @@ async def lifespan(_app: FastAPI):
     Base.metadata.create_all(bind=engine)
     # create_all never adds columns to an existing table; add the ones introduced since the
     # first release so an older dev database keeps working.
-    if "brief_json" not in {c["name"] for c in inspect(engine).get_columns("bookings")}:
-        with engine.begin() as conn:
-            conn.execute(text("ALTER TABLE bookings ADD COLUMN brief_json TEXT"))
+    for table, column in (("bookings", "brief_json"), ("chat_messages", "meta_json")):
+        if column not in {c["name"] for c in inspect(engine).get_columns(table)}:
+            with engine.begin() as conn:
+                conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {column} TEXT"))
     db = SessionLocal()
     try:
         seed_if_empty(db)
@@ -71,6 +74,8 @@ app.include_router(payments.router, prefix="/api")
 app.include_router(messages.router, prefix="/api")
 app.include_router(dashboard.router, prefix="/api")
 app.include_router(support.router, prefix="/api")
+app.include_router(reviews.router, prefix="/api")
+app.include_router(agent.router)
 
 
 @app.get("/api/health")

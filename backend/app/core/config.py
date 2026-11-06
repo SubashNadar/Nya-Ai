@@ -48,6 +48,11 @@ class Settings(BaseSettings):
     AZURE_STRONG_DEPLOYMENT: str = "gpt-5.4"  # answers, critic, LLM judge, Ragas
     EMBED_DIM: int = 1536
 
+    # R1 agent graph. When disabled, or when the law library is not reachable, chat falls back to the
+    # rule engine ("basic mode"). Checkpoints let an answer held for advocate review resume later.
+    AGENT_ENABLED: bool = True
+    CHECKPOINT_DB: str = "./nya_graph.db"
+
     # Self-hosted Langfuse from docker-compose.yml (http://localhost:3000).
     LANGFUSE_HOST: str = "http://localhost:3000"
     LANGFUSE_PUBLIC_KEY: str = ""
