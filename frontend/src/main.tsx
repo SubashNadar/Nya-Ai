@@ -6,13 +6,19 @@ import App from './App.tsx'
 import { Toaster } from 'sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { AuthProvider } from './context/AuthContext'
+import { MotionConfig } from 'motion/react'
+import { installFx } from './lib/fx'
+
+installFx()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <TooltipProvider delayDuration={200}>
-          <App />
+          <MotionConfig reducedMotion="user">
+            <App />
+          </MotionConfig>
           <Toaster
             position="top-center"
             toastOptions={{

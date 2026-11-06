@@ -8,6 +8,7 @@ import {
   Scale,
   UserRound,
 } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useAuth } from '../context/AuthContext'
 
 interface Tab {
@@ -53,13 +54,24 @@ export function BottomTabBar() {
             onClick={() => navigate(tab.path)}
             className="flex flex-1 flex-col items-center gap-1 border-none bg-transparent py-1.5"
           >
-            <span
-              className={`h-1 w-[26px] rounded-full ${active ? 'bg-primary' : 'bg-transparent'}`}
-            />
-            <tab.icon
-              className={`size-5 ${active ? 'text-primary' : 'text-faint'}`}
-              strokeWidth={active ? 2.4 : 2}
-            />
+            <span className="relative h-1 w-[26px]">
+              {active && (
+                <motion.span
+                  layoutId="tab-indicator"
+                  transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                  className="absolute inset-0 rounded-full bg-primary shadow-[0_0_12px_rgba(217,181,110,0.7)]"
+                />
+              )}
+            </span>
+            <motion.span
+              animate={active ? { scale: 1.12, y: -1 } : { scale: 1, y: 0 }}
+              transition={{ type: 'spring', stiffness: 420, damping: 22 }}
+            >
+              <tab.icon
+                className={`size-5 ${active ? 'text-primary' : 'text-faint'}`}
+                strokeWidth={active ? 2.4 : 2}
+              />
+            </motion.span>
             <span className={`text-[11px] ${active ? 'font-bold text-ink' : 'font-medium text-faint'}`}>
               {tab.label}
             </span>

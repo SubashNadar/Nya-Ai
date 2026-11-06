@@ -36,15 +36,22 @@ export default function LawyersPage() {
         First consultation ₹500 · Your lawyer keeps 70% · Bar Council verified
       </div>
 
-      <div className="mt-6 inline-flex flex-wrap gap-1 rounded-full border border-line bg-surface p-1 shadow-card">
+      <div className="relative isolate mt-6 inline-flex flex-wrap gap-1 rounded-full border border-line bg-surface p-1 shadow-card">
         {FILTERS.map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`rounded-full px-4 py-2 text-[13px] font-semibold transition-colors ${
-              filter === f ? 'bg-primary text-primary-foreground shadow-sm' : 'text-body2 hover:bg-bg hover:text-ink'
+            className={`relative rounded-full px-4 py-2 text-[13px] font-semibold transition-colors ${
+              filter === f ? 'text-primary-foreground' : 'text-body2 hover:text-ink'
             }`}
           >
+            {filter === f && (
+              <motion.span
+                layoutId="filter-pill"
+                transition={{ type: 'spring', stiffness: 480, damping: 34 }}
+                className="absolute inset-0 -z-10 rounded-full bg-primary shadow-[0_4px_18px_-4px_rgba(217,181,110,0.6)]"
+              />
+            )}
             {f}
           </button>
         ))}
@@ -64,8 +71,8 @@ export default function LawyersPage() {
               key={lw.id}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 * i, duration: 0.25, ease: 'easeOut' }}
-              whileHover={{ y: -3 }}
+              transition={{ delay: 0.05 * i, duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
+              data-tilt
               className="group flex flex-col overflow-hidden rounded-3xl border border-line bg-surface shadow-card transition-shadow hover:shadow-lift"
             >
               <div

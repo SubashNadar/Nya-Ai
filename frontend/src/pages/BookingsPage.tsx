@@ -96,7 +96,7 @@ export default function BookingsPage() {
           />
         </div>
       ) : (
-        <div className="mt-3 flex flex-col gap-3">
+        <div className="fx-stagger mt-3 flex flex-col gap-3">
           {bookings.map((b) => (
             <ConsultationCard key={b.id} booking={b} />
           ))}

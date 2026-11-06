@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { CalendarCheck, MessageSquareText, PiggyBank } from 'lucide-react'
 import { getApiErrorMessage, getUserDashboard } from '../lib/api'
 import { ErrorState, LoadingState } from '../components/states'
+import { CountUp } from '../components/CountUp'
 import { useAuth } from '../context/AuthContext'
 import type { UserDashboard } from '../types'
 
@@ -57,19 +58,19 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="mt-5 grid max-w-[1000px] grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="fx-stagger mt-5 grid max-w-[1000px] grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-line bg-surface p-5 shadow-card transition-shadow hover:shadow-lift">
           <div className="mb-2.5 flex size-9 items-center justify-center rounded-xl bg-soft text-primary">
             <MessageSquareText className="size-[18px]" />
           </div>
-          <div className="font-heading text-[26px] font-extrabold">{data.questions_answered}</div>
+          <div className="font-heading text-[26px] font-extrabold"><CountUp value={data.questions_answered} /></div>
           <div className="mt-0.5 text-xs text-muted">questions answered free</div>
         </div>
         <div className="rounded-2xl border border-line bg-surface p-5 shadow-card transition-shadow hover:shadow-lift">
           <div className="mb-2.5 flex size-9 items-center justify-center rounded-xl bg-soft text-primary">
             <CalendarCheck className="size-[18px]" />
           </div>
-          <div className="font-heading text-[26px] font-extrabold">{data.consults_booked}</div>
+          <div className="font-heading text-[26px] font-extrabold"><CountUp value={data.consults_booked} /></div>
           <div className="mt-0.5 text-xs text-muted">lawyer consults booked</div>
         </div>
         <div className="rounded-2xl border border-line bg-surface p-5 shadow-card transition-shadow hover:shadow-lift">
@@ -77,7 +78,7 @@ export default function DashboardPage() {
             <PiggyBank className="size-[18px]" />
           </div>
           <div className="font-heading text-[26px] font-extrabold text-success-text">
-            ₹{data.saved_amount.toLocaleString('en-IN')}
+            <CountUp value={data.saved_amount} prefix="₹" locale="en-IN" />
           </div>
           <div className="mt-0.5 text-xs text-muted">saved vs typical lawyer fees</div>
         </div>
@@ -120,7 +121,7 @@ export default function DashboardPage() {
       )}
 
       <div className="mt-9 font-display text-[22px] font-semibold">Recent questions</div>
-      <div className="mt-3 flex max-w-[1000px] flex-col gap-2">
+      <div className="fx-stagger mt-3 flex max-w-[1000px] flex-col gap-2">
         {data.recent_questions.map((rq, i) => (
           <div
             key={i}

@@ -50,7 +50,7 @@ export default function ReviewQueue() {
         Live matters are held here. The client sees the answer only after you approve, edit or reject it.
       </div>
       {error && <div className="mt-2 max-w-[760px] text-[13px] text-warn-text">{error}</div>}
-      <div className="mt-3 flex max-w-[760px] flex-col gap-2.5">
+      <div className="fx-stagger mt-3 flex max-w-[760px] flex-col gap-2.5">
         {reviews.length === 0 && (
           <div className="rounded-2xl border border-line bg-surface p-5 text-sm text-muted">
             No answers waiting for review.

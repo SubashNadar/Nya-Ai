@@ -58,6 +58,11 @@ Nya-AI is the only product.
 
 ## Log (newest first)
 
+- **2026-11-06** — Motion and controls kit at the owner's request ("trendy controls and animations"):
+  spotlight/tilt cards, ripple and glowing buttons, sliding pills, route transitions, staggered lists,
+  count-up stats, composer border beam, skeleton loading. Layout unchanged; reduced motion respected.
+  See `docs/DESIGN.md`.
+
 - **2026-11-06** — The owner chose to restore the Orbit navy and brass colours, replacing Sage & Clay.
   The frontend theme commits d12d908 and f19d7b8 were reversed; only colours changed, not the layout.
 

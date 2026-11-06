@@ -58,6 +58,22 @@ behaviour unchanged until each one is approved. The code is in d12d908 if one is
 
 All would stop under `prefers-reduced-motion`.
 
+## Motion and controls kit (2026-11-06)
+
+The owner asked for "trendy new innovative controls and animations wherever possible". Orbit layout
+and alignment are unchanged; only behaviour and finish were added, in navy and brass.
+
+- `frontend/src/lib/fx.ts` (`installFx()` in `main.tsx`): pointer spotlight on cards (`--mx/--my`),
+  3D tilt on `[data-tilt]`, ripple on pill buttons. Skipped when the OS asks for reduced motion.
+- `frontend/src/index.css` `fx-*` classes: aurora backdrop, primary-button glow and sweep, press scale,
+  card spotlight + brass border on hover, input focus halo, `fx-stagger` rise-in lists, `fx-beam`
+  conic border on the chat composer, `fx-skeleton` shimmer, `fx-gradient-text`, `fx-ping`.
+- Sliding `layoutId` pills: sign-in role toggle, lawyer filters, phone tab bar indicator.
+- Route transitions (fade, rise, de-blur) in `AppShell`; staggered answer paragraphs and trace steps
+  in chat; `CountUp` numbers on the dashboard and lawyer portal; skeleton rows in `LoadingState`.
+- `MotionConfig reducedMotion="user"` plus a `prefers-reduced-motion` CSS override turn it all off.
+- Screens: `/mnt/project-files/nya-ai/motion-kit/`.
+
 ## Not done yet
 
 - No dark mode. The tokens are plain hex, so a dark mode would first move them to CSS variables.

@@ -128,13 +128,19 @@ function Answer({ m, index, onLawyer }: { m: ChatMessage; index: number; onLawye
       </div>
       <div className="flex flex-col gap-3 px-5 py-5 md:px-6">
         {paragraphs.map((p, i) => (
-          <div key={i} className="grid grid-cols-[34px_1fr] gap-2 text-[15px] leading-[1.65] text-body3">
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 8, filter: 'blur(4px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ delay: 0.12 + i * 0.09, duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
+            className="grid grid-cols-[34px_1fr] gap-2 text-[15px] leading-[1.65] text-body3"
+          >
             <span className="pt-0.5 font-mono text-xs text-brass-light">¶{i + 1}</span>
             <span>
               {p}
               {i === 0 && refs.length > 0 && <sup className="ml-0.5 font-mono text-[11px] text-brass-light">[1]</sup>}
             </span>
-          </div>
+          </motion.div>
         ))}
       </div>
       {refs.length > 0 && (
@@ -171,14 +177,20 @@ function TracePanel({ turn }: { turn: Turn | null }) {
       </div>
       {turn ? (
         <ol className="flex flex-col gap-3">
-          {turn.steps.map((s) => (
-            <li key={s.name} className="grid grid-cols-[18px_1fr] gap-2">
+          {turn.steps.map((s, i) => (
+            <motion.li
+              key={s.name}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.12, duration: 0.3, ease: 'easeOut' }}
+              className="grid grid-cols-[18px_1fr] gap-2"
+            >
               <span className={`font-mono text-xs ${s.done ? 'text-success-text' : 'text-faint'}`}>{s.done ? '✓' : '○'}</span>
               <div>
                 <div className="font-mono text-[12.5px] text-ink">{s.name}</div>
                 <div className="mt-0.5 text-[12px] leading-snug text-muted">{s.detail}</div>
               </div>
-            </li>
+            </motion.li>
           ))}
         </ol>
       ) : (
@@ -417,7 +429,10 @@ export default function ChatPage() {
 
           <div className="flex-none px-4 pb-4 pt-2 md:px-8 md:pb-5">
             <div className="mx-auto w-full max-w-[780px]">
-              <div className="flex items-center gap-2 rounded-2xl border border-brass-light/45 bg-surface p-2 pl-4 shadow-composer focus-within:border-focus">
+              <div
+                data-active={typing}
+                className="fx-beam flex items-center gap-2 rounded-2xl border border-brass-light/45 bg-surface p-2 pl-4 shadow-composer focus-within:border-transparent"
+              >
                 <span aria-hidden className="font-mono text-lg text-brass-light">
                   ›
                 </span>

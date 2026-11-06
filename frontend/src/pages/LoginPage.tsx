@@ -101,15 +101,15 @@ export default function LoginPage() {
             AI legal assistant for India
           </div>
           <h1 className="mt-5 font-display text-[44px] font-semibold leading-[1.05] tracking-[-0.02em] xl:text-[52px]">
-            Legal help, finally <span className="italic text-brass-light">within reach.</span>
+            Legal help, finally <span className="fx-gradient-text italic">within reach.</span>
           </h1>
           <p className="mt-5 text-[16px] leading-[1.7] text-white/70">
             90% of Indians can't afford a lawyer. Ask Nya-AI anything about your rights — free, instant,
             24×7. Talk to a verified lawyer only when you need one, from ₹500.
           </p>
-          <div className="mt-8 grid grid-cols-3 gap-3">
+          <div className="fx-stagger mt-8 grid grid-cols-3 gap-3">
             {BADGES.map((b) => (
-              <div key={b.label} className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
+              <div key={b.label} data-spot data-tilt className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
                 <b.icon className="size-5 text-brass-light" />
                 <div className="mt-3 text-[13px] font-semibold leading-snug text-white/90">{b.label}</div>
               </div>
@@ -143,25 +143,39 @@ export default function LoginPage() {
           >
             <div className="mb-8 lg:hidden">
               <h1 className="font-display text-[34px] font-semibold leading-[1.08]">
-                Legal help, finally <span className="italic text-primary">within reach.</span>
+                Legal help, finally <span className="fx-gradient-text italic">within reach.</span>
               </h1>
             </div>
               <div className="font-display text-[30px] font-semibold tracking-[-0.01em]">Get started</div>
-              <div className="mt-5 flex gap-1 rounded-full border border-line bg-bg p-1">
+              <div className="relative isolate mt-5 flex gap-1 rounded-full border border-line bg-bg p-1">
                 <button
                   onClick={() => setRole('user')}
-                  className={`flex-1 rounded-full px-2.5 py-2 text-[13px] font-semibold transition-colors ${
-                    role === 'user' ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-transparent text-body2 hover:text-ink'
+                  className={`relative flex-1 rounded-full px-2.5 py-2 text-[13px] font-semibold transition-colors ${
+                    role === 'user' ? 'text-primary-foreground' : 'bg-transparent text-body2 hover:text-ink'
                   }`}
                 >
+                  {role === 'user' && (
+                    <motion.span
+                      layoutId="role-pill"
+                      transition={{ type: 'spring', stiffness: 480, damping: 34 }}
+                      className="absolute inset-0 -z-10 rounded-full bg-primary shadow-[0_4px_18px_-4px_rgba(217,181,110,0.6)]"
+                    />
+                  )}
                   I need legal help
                 </button>
                 <button
                   onClick={() => setRole('lawyer')}
-                  className={`flex-1 rounded-full px-2.5 py-2 text-[13px] font-semibold transition-colors ${
-                    role === 'lawyer' ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-transparent text-body2 hover:text-ink'
+                  className={`relative flex-1 rounded-full px-2.5 py-2 text-[13px] font-semibold transition-colors ${
+                    role === 'lawyer' ? 'text-primary-foreground' : 'bg-transparent text-body2 hover:text-ink'
                   }`}
                 >
+                  {role === 'lawyer' && (
+                    <motion.span
+                      layoutId="role-pill"
+                      transition={{ type: 'spring', stiffness: 480, damping: 34 }}
+                      className="absolute inset-0 -z-10 rounded-full bg-primary shadow-[0_4px_18px_-4px_rgba(217,181,110,0.6)]"
+                    />
+                  )}
                   I'm a lawyer
                 </button>
               </div>

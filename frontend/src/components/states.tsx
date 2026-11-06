@@ -7,6 +7,11 @@ export function LoadingState({ label = 'Loading…' }: { label?: string }) {
         <span className="h-2 w-2 animate-dotpulse rounded-full bg-primary [animation-delay:0.3s]" />
       </div>
       <div className="text-sm font-medium">{label}</div>
+      <div aria-hidden className="mt-2 flex w-full max-w-[320px] flex-col gap-2">
+        <div className="fx-skeleton fx-skeleton-row w-full" />
+        <div className="fx-skeleton fx-skeleton-row w-4/5" />
+        <div className="fx-skeleton fx-skeleton-row w-3/5" />
+      </div>
     </div>
   )
 }

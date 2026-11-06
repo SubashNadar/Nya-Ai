@@ -62,3 +62,224 @@ select:focus {
 button {
   font-family: inherit;
 }
+
+/* ===================== Motion & controls kit (2026-11-06) ===================== */
+
+/* Aurora: slow-drifting navy, teal and brass light behind the Orbit grid. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: -20%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(40% 35% at 15% 20%, rgba(46, 94, 150, 0.32), transparent 70%),
+    radial-gradient(35% 30% at 85% 15%, rgba(217, 181, 110, 0.14), transparent 70%),
+    radial-gradient(45% 40% at 70% 85%, rgba(31, 122, 110, 0.18), transparent 70%);
+  filter: blur(20px);
+  animation: fx-aurora 26s ease-in-out infinite alternate;
+}
+#root {
+  position: relative;
+  z-index: 0;
+}
+@keyframes fx-aurora {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(3%, -2%, 0) scale(1.06); }
+  100% { transform: translate3d(-3%, 2%, 0) scale(1.02); }
+}
+
+/* Every button presses in; rounded buttons carry the ripple. */
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  transition: transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease, background-color 0.2s ease,
+    color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+button:not(:disabled):active {
+  transform: scale(0.965);
+}
+button.rounded-full,
+a.rounded-full {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.fx-ripple {
+  position: absolute;
+  z-index: -1;
+  border-radius: 9999px;
+  background: currentColor;
+  opacity: 0.22;
+  transform: scale(0);
+  pointer-events: none;
+  animation: fx-ripple 0.6s ease-out forwards;
+}
+@keyframes fx-ripple {
+  to { transform: scale(1); opacity: 0; }
+}
+
+/* Primary (brass) actions: glow on hover and a light sweep across. */
+.bg-primary:is(button, a) {
+  box-shadow: 0 0 0 0 rgba(217, 181, 110, 0);
+}
+.bg-primary:is(button, a):not(:disabled):hover {
+  box-shadow: 0 6px 24px -6px rgba(217, 181, 110, 0.55), 0 0 0 1px rgba(217, 181, 110, 0.35);
+}
+.bg-primary:is(button, a)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.38) 50%, transparent 70%);
+  transform: translateX(-120%);
+}
+.bg-primary:is(button, a):not(:disabled):hover::after {
+  animation: fx-sweep 0.9s ease;
+}
+@keyframes fx-sweep {
+  to { transform: translateX(120%); }
+}
+
+/* Cards: spotlight that follows the pointer, a lift and a brass edge on hover. */
+.bg-surface,
+[data-spot] {
+  transition: border-color 0.25s ease, box-shadow 0.3s ease, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.bg-surface:hover:not(nav, header, aside, input, textarea, select),
+[data-spot]:hover {
+  background-image: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(217, 181, 110, 0.085), transparent 45%);
+}
+[class*='rounded-[18px]'].bg-surface:hover,
+[class*='rounded-3xl'].bg-surface:hover,
+[class*='rounded-2xl'].bg-surface:hover {
+  border-color: rgba(217, 181, 110, 0.35);
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.6);
+}
+[data-tilt] {
+  transform-style: preserve-3d;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.25s ease;
+  will-change: transform;
+}
+
+/* Inputs: a soft brass halo instead of a hard outline. */
+input:focus:not(.bg-transparent),
+textarea:focus:not(.bg-transparent),
+select:focus:not(.bg-transparent) {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(217, 181, 110, 0.22), 0 0 24px -6px rgba(217, 181, 110, 0.45);
+  transition: box-shadow 0.25s ease;
+}
+input,
+textarea,
+select {
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+/* Lists rise in one after another. */
+.fx-stagger > * {
+  animation: fx-rise 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.fx-stagger > *:nth-child(2) { animation-delay: 0.05s; }
+.fx-stagger > *:nth-child(3) { animation-delay: 0.1s; }
+.fx-stagger > *:nth-child(4) { animation-delay: 0.15s; }
+.fx-stagger > *:nth-child(5) { animation-delay: 0.2s; }
+.fx-stagger > *:nth-child(6) { animation-delay: 0.25s; }
+.fx-stagger > *:nth-child(7) { animation-delay: 0.3s; }
+.fx-stagger > *:nth-child(n + 8) { animation-delay: 0.35s; }
+@keyframes fx-rise {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); filter: blur(4px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+
+/* Border beam: a brass light travelling around the edge (composer, highlighted cards). */
+.fx-beam {
+  position: relative;
+  isolation: isolate;
+}
+.fx-beam::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(from var(--fx-angle, 0deg), transparent 0 70%, rgba(217, 181, 110, 0.95) 85%, rgba(120, 190, 255, 0.8) 92%, transparent 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: fx-spin-angle 3.2s linear infinite;
+}
+.fx-beam:focus-within::before,
+.fx-beam[data-active='true']::before {
+  opacity: 1;
+}
+@property --fx-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes fx-spin-angle {
+  to { --fx-angle: 360deg; }
+}
+
+/* Skeleton shimmer for loading placeholders. */
+.fx-skeleton {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.1) 40%, rgba(255, 255, 255, 0.04) 80%);
+  background-size: 200% 100%;
+  animation: fx-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes fx-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+/* Gradient text that slowly shifts (headline accents). */
+.fx-gradient-text {
+  background: linear-gradient(90deg, #d9b56e, #f2dca8, #8fc2ff, #d9b56e);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: fx-hue 8s ease-in-out infinite;
+}
+@keyframes fx-hue {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Live dot pulse (available, engine status). */
+.fx-ping {
+  position: relative;
+}
+.fx-ping::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: inherit;
+  animation: fx-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes fx-ping {
+  75%, 100% { transform: scale(2.4); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  body::before {
+    animation: none;
+  }
+}
+
+.fx-skeleton-row { height: 12px; border-radius: 999px; }

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { getApiErrorMessage, getLawyerDashboard, respondToBooking } from '../lib/api'
 import { ErrorState, LoadingState } from '../components/states'
 import ReviewQueue from '../components/ReviewQueue'
+import { CountUp } from '../components/CountUp'
 import type { Booking, LawyerDashboard } from '../types'
 
 export default function LawyerPortalPage() {
@@ -59,28 +60,28 @@ export default function LawyerPortalPage() {
               : 'border-line bg-bg text-muted'
           }`}
         >
-          <span className={`h-2 w-2 rounded-full ${available ? 'bg-success-text' : 'bg-faint'}`} />
+          <span className={`h-2 w-2 rounded-full ${available ? 'fx-ping bg-success-text' : 'bg-faint'}`} />
           {available ? 'Available for consults' : 'Unavailable'}
         </button>
       </div>
 
-      <div className="mt-5 grid max-w-[920px] grid-cols-2 gap-3.5 md:grid-cols-4">
+      <div className="fx-stagger mt-5 grid max-w-[920px] grid-cols-2 gap-3.5 md:grid-cols-4">
         <div className="rounded-[18px] border border-line bg-surface p-[18px]">
           <div className="font-heading text-2xl font-extrabold text-success-text">
-            ₹{data.earnings_month.toLocaleString('en-IN')}
+            <CountUp value={data.earnings_month} prefix="₹" />
           </div>
           <div className="mt-0.5 text-xs text-muted">earnings this month</div>
         </div>
         <div className="rounded-[18px] border border-line bg-surface p-[18px]">
-          <div className="font-heading text-2xl font-extrabold">{data.consultations}</div>
+          <div className="font-heading text-2xl font-extrabold"><CountUp value={data.consultations} /></div>
           <div className="mt-0.5 text-xs text-muted">consultations</div>
         </div>
         <div className="rounded-[18px] border border-line bg-surface p-[18px]">
-          <div className="font-heading text-2xl font-extrabold">★ {data.rating}</div>
+          <div className="font-heading text-2xl font-extrabold">★ <CountUp value={data.rating} decimals={1} /></div>
           <div className="mt-0.5 text-xs text-muted">avg rating ({data.reviews} reviews)</div>
         </div>
         <div className="rounded-[18px] border border-line bg-surface p-[18px]">
-          <div className="font-heading text-2xl font-extrabold">{data.share_pct}%</div>
+          <div className="font-heading text-2xl font-extrabold"><CountUp value={data.share_pct} suffix="%" /></div>
           <div className="mt-0.5 text-xs text-muted">your share · payout every Friday</div>
         </div>
       </div>
@@ -88,7 +89,7 @@ export default function LawyerPortalPage() {
       <ReviewQueue />
 
       <div className="mt-7 font-heading text-lg font-bold">Consultation requests</div>
-      <div className="mt-3 flex max-w-[760px] flex-col gap-2.5">
+      <div className="fx-stagger mt-3 flex max-w-[760px] flex-col gap-2.5">
         {data.requests.length === 0 && (
           <div className="rounded-2xl border border-line bg-surface p-5 text-sm text-muted">
             No consultation requests yet.
