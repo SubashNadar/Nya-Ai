@@ -59,6 +59,12 @@ Nya-AI is the only product.
 
 ## Log (newest first)
 
+- **2026-11-07** — ADRs and sprint status: 11 architecture decisions as ADRs in `docs/adr/` (linked
+  from `docs/DECISIONS.md`), and `docs/SPRINT-STATUS.md` with all 22 capstone tasks and their evidence.
+  Open: task 8 (owner's Miro/Trello link), task 17 (official BPR&D IPC→BNS table: bprd.nic.in refuses
+  scripted downloads, the owner saves it to `backend/data/raw/bprd_bns_ipc_comparison.pdf`), task 21
+  (owner checks the baseline), task 22 prices.
+
 - **2026-11-07** — Prompt framework (sprint task 13): the six prompts (writer, triage, sql_picker,
   judge, planner, basic_mode) moved verbatim into `app/agents/prompts/` as versioned `Prompt` records
   (text checked byte for byte). Every Azure generation in Langfuse is named after its prompt with
