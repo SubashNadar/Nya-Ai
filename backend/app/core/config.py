@@ -61,6 +61,10 @@ class Settings(BaseSettings):
     CHECKPOINT_DB: str = "./nya_graph.db"  # SQLite fallback when CHECKPOINT_DATABASE_URL is empty or down
     # Postgres for checkpoints (docs/MEMORY.md), e.g. the law library database. Empty means SQLite.
     CHECKPOINT_DATABASE_URL: str = ""
+    # Law tools through the MCP server (app/agents/mcp_server.py) instead of direct calls. Off by default:
+    # same results, extra latency. MCP_SERVER_URL = streamable HTTP endpoint; empty = stdio subprocess.
+    TOOLS_VIA_MCP: bool = False
+    MCP_SERVER_URL: str = ""
 
     # Self-hosted Langfuse from docker-compose.yml (http://localhost:3000).
     LANGFUSE_HOST: str = "http://localhost:3000"

@@ -542,20 +542,32 @@ def law_engine():
     return create_engine(url, connect_args=args, pool_pre_ping=True)
 
 
+@lru_cache
+def mcp_law_client():
+    """One shared MCP session for the graph's law tools (only when TOOLS_VIA_MCP is on)."""
+    from app.agents.mcp_client import McpLawClient, http_session
+
+    url = get_settings().MCP_SERVER_URL
+    return McpLawClient(http_session(url) if url else None)
+
+
 def default_tools() -> Tools:
     from app.agents.safety_llm import classify
     from app.rag import sql_queries
 
-    def sql(template: str, params: dict):
+    def direct_sql(template: str, params: dict):
         return sql_queries.run(law_engine(), template, **params)
+
+    search, sql = library_search, direct_sql
+    if get_settings().TOOLS_VIA_MCP:
+        client = mcp_law_client()
+        search, sql = client.search, client.sql
 
     def llm(messages: list[dict], model: str) -> dict | None:
         return azure_json(messages, deployment=model)
 
     configured = azure_configured()
-    return Tools(
-        search=library_search, sql=sql, llm=llm if configured else None, classify=classify if configured else None
-    )
+    return Tools(search=search, sql=sql, llm=llm if configured else None, classify=classify if configured else None)
 
 
 _LIBRARY: dict = {}

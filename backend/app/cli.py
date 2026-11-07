@@ -1,4 +1,4 @@
-"""`uv run nya-agent <command>`: fetch, count, setup, ingest, golden, search, status, ask, answers, slo, cost."""
+"""`uv run nya-agent <command>`: fetch, count, setup, ingest, golden, search, status, ask, answers, slo, cost, mcp."""
 
 import argparse
 from datetime import date
@@ -36,11 +36,20 @@ def main() -> None:
     cost.add_argument("--days", type=int, default=14)
     cost.add_argument("--traces", type=int, default=10, help="how many recent traces to list")
     cost.add_argument("--register-prices", action="store_true", help="write the PRICE_* settings into Langfuse")
+    m = sub.add_parser("mcp", help="run the read-only law tools as an MCP server (stdio, or --http)")
+    m.add_argument("--http", action="store_true", help="streamable HTTP instead of stdio")
+    m.add_argument("--host", default="127.0.0.1")
+    m.add_argument("--port", type=int, default=8765)
     from app.evals import run as slo_run
 
     slo_run.add_parser(sub)
     args = p.parse_args()
 
+    if args.cmd == "mcp":
+        from app.agents.mcp_server import main as mcp_main
+
+        mcp_main(http=args.http, host=args.host, port=args.port)
+        return
     if args.cmd == "cost":
         from app.evals import cost as cost_report
 

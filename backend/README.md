@@ -82,6 +82,29 @@ date (IPC before 1 July 2024; BNS, BNSS and BSA from then); SQL tables `acts`, `
 Expected section counts: BNS 358, BNSS 531, BSA 170, IPC 511 numbered sections. Langfuse login on
 first start: `admin@nya.local` / `change-me-admin` (change the values in `docker-compose.yml`).
 
+## MCP server (law tools)
+
+The law library's read-only tools are also an MCP server (`app/agents/mcp_server.py`, the `mcp` SDK's
+FastMCP): `law_search`, `get_section`, `search_judgments` (says "not loaded yet" until judgments are
+ingested), `map_ipc_to_bns`, `acts_in_force` and `sql_lookup` (fixed templates only). Law data only:
+no tool can reach users, bookings, briefs or payments.
+
+```bash
+uv run nya-agent mcp                  # stdio, for Claude Desktop or the MCP Inspector
+uv run nya-agent mcp --http           # streamable HTTP on http://127.0.0.1:8765/mcp
+npx @modelcontextprotocol/inspector uv --directory . run nya-agent mcp   # try the tools in a browser
+```
+
+Claude Desktop (`claude_desktop_config.json`):
+
+```json
+{"mcpServers": {"nya-ai-law": {"command": "uv", "args": ["--directory", "C:/Users/subash/Nya-Ai/backend", "run", "nya-agent", "mcp"]}}}
+```
+
+The graph calls the same functions directly by default. Set `TOOLS_VIA_MCP=true` to send its law
+search and SQL lookups through an MCP client (`app/agents/mcp_client.py`, one session kept open; stdio,
+or `MCP_SERVER_URL` for HTTP). Results are the same; each call costs a little latency.
+
 ## Cost tracking
 
 Every Azure call is a Langfuse generation with its token usage and cost: chat calls in

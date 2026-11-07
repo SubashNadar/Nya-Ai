@@ -59,6 +59,13 @@ Nya-AI is the only product.
 
 ## Log (newest first)
 
+- **2026-11-07** — MCP (sprint task 19): read-only law tools as an MCP server (`app/agents/mcp_server.py`,
+  `uv run nya-agent mcp`, stdio or `--http` on :8765/mcp): `law_search`, `get_section`,
+  `search_judgments` (placeholder), `map_ipc_to_bns`, `acts_in_force`, `sql_lookup`. Checked over real
+  stdio and HTTP against the ingested library. `TOOLS_VIA_MCP=true` routes the graph's search and SQL
+  through an MCP client (default off). Windows note: the server imports numpy/LlamaIndex before serving;
+  a first numpy import inside a tool call deadlocked the stdio reader.
+
 - **2026-11-07** — Memory (sprint task 18): LangGraph checkpoints moved to Postgres
   (`CHECKPOINT_DATABASE_URL`, local `nya-ai` on 9000) with SQLite as fallback; strategy in
   `docs/MEMORY.md`, decision in `docs/DECISIONS.md`. Test proves a held answer resumes after a restart.
