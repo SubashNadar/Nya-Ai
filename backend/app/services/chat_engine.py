@@ -9,6 +9,7 @@ group to match wins.
 import json
 import logging
 
+from app.agents import prompts
 from app.core.config import get_settings
 
 logger = logging.getLogger(__name__)
@@ -83,17 +84,7 @@ FALLBACK = {
     "citation": "",
 }
 
-ANTHROPIC_SYSTEM_PROMPT = """You are Nya-AI, an AI legal assistant for India. \
-You explain Indian law (IPC, CrPC, central acts) in plain, reassuring language, grounded in real \
-statutes and sections. You provide legal information, not legal advice — never claim to be a lawyer.
-
-Respond with ONLY a single JSON object (no markdown fences, no commentary) with this exact shape:
-{"text": "<one lead sentence introducing the answer>", \
-"points": ["<point 1>", "<point 2>", "<point 3>"], \
-"citation": "Sources: <Act/Section citation>"}
-
-Keep "points" to 2-4 short, concrete bullet points. If you are not confident of a specific citation, \
-set "citation" to an empty string rather than inventing one."""
+ANTHROPIC_SYSTEM_PROMPT = prompts.BASIC_MODE.text  # app/agents/prompts/basic_mode.py
 
 
 def rule_engine_answer(message: str) -> dict:

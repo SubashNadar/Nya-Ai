@@ -7,6 +7,7 @@ rules or a deterministic answer instead of raising.
 import json
 import logging
 
+from app.agents import prompts
 from app.core import costs
 from app.core.config import get_settings
 
@@ -35,7 +36,10 @@ def azure_chat(
         )
         extra = {"response_format": {"type": "json_object"}} if json_mode else {}
         model = deployment or s.AZURE_SMALL_DEPLOYMENT
-        with costs.generation(name or f"azure {model}", model, input=messages) as gen:
+        prompt = prompts.identify(messages)  # tags the generation with the prompt's name and version
+        label = name or (prompt.name if prompt else f"azure {model}")
+        meta = prompt.metadata() if prompt else {}
+        with costs.generation(label, model, input=messages, metadata=meta) as gen:
             r = client.chat.completions.create(model=model, messages=messages, **extra)
             content = r.choices[0].message.content
             u = r.usage

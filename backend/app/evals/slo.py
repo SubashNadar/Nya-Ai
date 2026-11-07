@@ -23,6 +23,7 @@ import statistics
 from dataclasses import dataclass
 from pathlib import Path
 
+from app.agents import prompts
 from app.agents.guards import check_output
 from app.agents.triage import Triage, triage
 from app.core.paths import CASES_DIR
@@ -289,13 +290,7 @@ def ragas_scores(records: list[dict]) -> dict[str, list[float]]:
     return {rename.get(c, c): [float(v) for v in df[c].tolist()] for c in cols if c in df}
 
 
-JUDGE_PROMPT = """You grade one answer from Nya-AI, a legal-information app for India. Use only the
-question, the retrieved sections and the answer. Score 1-5:
-5 every claim is supported by the sections, the law is right, plain language, cites act and
-  section, gives information not advice on the user's own case, hands over when it should;
-4 one small omission or wording issue; 3 partly supported or missing a citation; 2 a wrong or
-  unsupported legal claim; 1 wrong law, invented section, or advice/prediction on the user's case.
-Return only JSON: {"score": <1-5>, "reason": "<one sentence>"}"""
+JUDGE_PROMPT = prompts.JUDGE.text  # app/agents/prompts/judge.py
 
 
 def llm_judge(record: dict) -> float | None:

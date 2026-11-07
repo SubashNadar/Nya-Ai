@@ -59,6 +59,12 @@ Nya-AI is the only product.
 
 ## Log (newest first)
 
+- **2026-11-07** — Prompt framework (sprint task 13): the six prompts (writer, triage, sql_picker,
+  judge, planner, basic_mode) moved verbatim into `app/agents/prompts/` as versioned `Prompt` records
+  (text checked byte for byte). Every Azure generation in Langfuse is named after its prompt with
+  version and hash. `tests/agents/test_prompts.py` pins version + text hash, so a prompt edit needs a
+  version bump. Framework, patterns and rules in `docs/PROMPTS.md`.
+
 - **2026-11-07** — MCP (sprint task 19): read-only law tools as an MCP server (`app/agents/mcp_server.py`,
   `uv run nya-agent mcp`, stdio or `--http` on :8765/mcp): `law_search`, `get_section`,
   `search_judgments` (placeholder), `map_ipc_to_bns`, `acts_in_force`, `sql_lookup`. Checked over real
