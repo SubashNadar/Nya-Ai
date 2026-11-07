@@ -32,6 +32,8 @@ dependencies = [
     "pypdf>=6.21.4",
     "langgraph-checkpoint-sqlite>=3.0",
     "tiktoken>=0.14.0",
+    "langgraph-checkpoint-postgres>=3.2.0",
+    "psycopg-pool>=3.3.3",
 ]
 
 [project.scripts]

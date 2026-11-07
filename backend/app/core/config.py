@@ -58,7 +58,9 @@ class Settings(BaseSettings):
     # R1 agent graph. When disabled, or when the law library is not reachable, chat falls back to the
     # rule engine ("basic mode"). Checkpoints let an answer held for advocate review resume later.
     AGENT_ENABLED: bool = True
-    CHECKPOINT_DB: str = "./nya_graph.db"
+    CHECKPOINT_DB: str = "./nya_graph.db"  # SQLite fallback when CHECKPOINT_DATABASE_URL is empty or down
+    # Postgres for checkpoints (docs/MEMORY.md), e.g. the law library database. Empty means SQLite.
+    CHECKPOINT_DATABASE_URL: str = ""
 
     # Self-hosted Langfuse from docker-compose.yml (http://localhost:3000).
     LANGFUSE_HOST: str = "http://localhost:3000"

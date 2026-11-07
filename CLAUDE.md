@@ -59,6 +59,12 @@ Nya-AI is the only product.
 
 ## Log (newest first)
 
+- **2026-11-07** — Memory (sprint task 18): LangGraph checkpoints moved to Postgres
+  (`CHECKPOINT_DATABASE_URL`, local `nya-ai` on 9000) with SQLite as fallback; strategy in
+  `docs/MEMORY.md`, decision in `docs/DECISIONS.md`. Test proves a held answer resumes after a restart.
+  Fixed a privacy gap found on the way: earlier chat turns reached the writer model unredacted; history
+  is now PII-redacted like the question. Checkpoint and review retention is proposed, not automated.
+
 - **2026-11-07** — Cost tracking (sprint task 22): every Azure chat call, ingestion embedding and
   search query embedding is a Langfuse generation with token usage and cost (`app/core/costs.py`).
   Prices are `PRICE_*` settings in USD per 1M tokens, placeholders (0) until the owner copies them from

@@ -1,7 +1,9 @@
 """Runs the R1 graph for one turn: checkpointing, Langfuse tracing and scores, streaming, resume.
 
-The checkpointer is SQLite (`CHECKPOINT_DB`, next to the app database) so an answer held for
-advocate review survives a restart with zero setup; tests pass an in-memory one.
+Checkpoints (the graph's short-term memory, docs/MEMORY.md) go to Postgres when
+`CHECKPOINT_DATABASE_URL` is set, else to SQLite (`CHECKPOINT_DB`), so an answer held for advocate
+review survives a restart. If Postgres is down at start-up the runner falls back to SQLite. Tests pass
+an in-memory checkpointer.
 """
 
 import hashlib
@@ -41,6 +43,43 @@ def memory_checkpointer():
     return InMemorySaver(serde=serializer())
 
 
+def sqlite_checkpointer():
+    from langgraph.checkpoint.sqlite import SqliteSaver
+
+    conn = sqlite3.connect(get_settings().CHECKPOINT_DB, check_same_thread=False)
+    return SqliteSaver(conn, serde=serializer())
+
+
+def postgres_checkpointer(url: str):
+    """A PostgresSaver on a small connection pool; creates its tables on first use."""
+    from langgraph.checkpoint.postgres import PostgresSaver
+    from psycopg.rows import dict_row
+    from psycopg_pool import ConnectionPool
+
+    url = url.replace("postgresql+psycopg://", "postgresql://", 1)
+    pool = ConnectionPool(
+        url,
+        min_size=1,
+        max_size=5,
+        open=True,
+        timeout=5,
+        kwargs={"autocommit": True, "prepare_threshold": 0, "row_factory": dict_row},
+    )
+    saver = PostgresSaver(pool, serde=serializer())
+    saver.setup()
+    return saver
+
+
+def default_checkpointer():
+    url = get_settings().CHECKPOINT_DATABASE_URL
+    if url:
+        try:
+            return postgres_checkpointer(url)
+        except Exception:  # noqa: BLE001  # pylint: disable=broad-exception-caught  # SQLite keeps chat working
+            logger.warning("Postgres checkpointer unavailable, falling back to SQLite", exc_info=True)
+    return sqlite_checkpointer()
+
+
 @dataclass
 class TurnResult:
     answer: Answer
@@ -58,10 +97,7 @@ def user_hash(user_id: str | None) -> str | None:
 class AgentRunner:
     def __init__(self, tools: Tools | None = None, checkpointer=None):
         if checkpointer is None:
-            from langgraph.checkpoint.sqlite import SqliteSaver
-
-            conn = sqlite3.connect(get_settings().CHECKPOINT_DB, check_same_thread=False)
-            checkpointer = SqliteSaver(conn, serde=serializer())
+            checkpointer = default_checkpointer()
         self.graph = build_graph(tools or default_tools(), checkpointer)
 
     # ---- config and observability ----

@@ -3,6 +3,16 @@
 Product decisions that the code depends on. Newest first. Older entries came from the app's earlier
 life under another name; the full history is in git.
 
+## Memory: Postgres checkpoints, per-turn threads (2026-11-07)
+
+- Graph checkpoints go to Postgres (`CHECKPOINT_DATABASE_URL`, the owner's local `nya-ai` database on
+  port 9000), as the MCP decision below already assumed. SQLite (`CHECKPOINT_DB`) stays as the fallback
+  when the URL is empty or Postgres is down, so chat never stops for a database.
+- One thread per turn, not per conversation: the graph state is built for one question. The
+  conversation lives in `chat_messages`; the writer sees the last 4 messages, PII-redacted (before
+  2026-11-07 the history was sent to the model unredacted; fixed).
+- Retention is proposed, not automated yet. Full strategy: `docs/MEMORY.md`.
+
 ## Orbit navy theme restored (2026-11-06)
 
 The owner chose to switch back from Sage & Clay to the Orbit navy and brass colours across the app.

@@ -148,3 +148,17 @@ def test_answer_run_writes_one_scored_line_per_case(runner, tmp_path):
     assert n == len(lines) > 0
     first = lines[0]
     assert {"id", "question", "answer", "contexts", "evidence", "expected_sections", "latency_s"} <= set(first)
+
+
+def test_history_is_redacted_before_the_model_sees_it():
+    seen = []
+
+    def llm(messages, model):
+        seen.append(messages)
+        # falls back to the deterministic answer
+
+    r = AgentRunner(Tools(search=search, llm=llm, small_model="nano", strong_model="big"), memory_checkpointer())
+    history = [{"role": "user", "text": "Call me on 9876543210 about my case"}, {"role": "ai", "text": "Noted."}]
+    r.run("What does BNS section 303 say?", "t-hist", history=history)
+    sent = " ".join(m["content"] for call in seen for m in call)
+    assert seen and "9876543210" not in sent

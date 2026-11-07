@@ -31,7 +31,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import interrupt
 
 from app.agents import sql_agent
-from app.agents.guards import check_input, check_output
+from app.agents.guards import check_input, check_output, redact
 from app.agents.llm import azure_configured, azure_json
 from app.agents.state import Answer, Citation, Critique, Draft, NyaState, SqlResult
 from app.agents.triage import triage
@@ -296,7 +296,8 @@ def _evidence_block(evidence: list[Evidence]) -> str:
 
 
 def _llm_draft(llm: Llm, model: str, state: NyaState, evidence: list[Evidence], sql: SqlResult | None) -> Draft | None:
-    history = "\n".join(f"{h['role']}: {h['text'][:400]}" for h in (state.get("history") or [])[-4:])
+    # Earlier turns are redacted like the question, so PII typed in a past message never reaches the model.
+    history = "\n".join(f"{h['role']}: {redact(h['text'][:400])[0]}" for h in (state.get("history") or [])[-4:])
     lookup = sql_agent.describe(sql.template, sql.params, sql.rows) if sql and not sql.error else ""
     critique = state.get("critique")
     retry = ""
