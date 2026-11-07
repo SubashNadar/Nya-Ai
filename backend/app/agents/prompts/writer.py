@@ -7,7 +7,7 @@ PROMPT = Prompt(
     version="1.0.0",
     pattern="persona + grounding rules + JSON schema; reflection retry",
     purpose="Writes the cited answer from retrieved sections and the SQL lookup only.",
-    model="strong",
+    model="small, strong on the critic's retry",
     text="""You are the writer for Nya-AI, a legal-information service for India. You explain what
 Indian law says, in plain English, for a general reader. You give legal information, never legal advice.
 

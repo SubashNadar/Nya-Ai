@@ -3,6 +3,9 @@
 Product decisions that the code depends on. Newest first. Older entries came from the app's earlier
 life under another name; the full history is in git.
 
+The architecture decisions are also written up as formal ADRs (Context / Decision / Consequences /
+Status) in [`adr/`](adr/README.md). This file stays the running log.
+
 ## Memory: Postgres checkpoints, per-turn threads (2026-11-07)
 
 - Graph checkpoints go to Postgres (`CHECKPOINT_DATABASE_URL`, the owner's local `nya-ai` database on

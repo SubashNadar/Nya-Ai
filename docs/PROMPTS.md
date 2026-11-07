@@ -18,7 +18,7 @@ anywhere else in the code.
 
 | Name | Used by | Model | Pattern | Output |
 |---|---|---|---|---|
-| `writer` | graph `writer` node | gpt-5.4 | Persona + grounding rules + JSON schema; **reflection**: the critic node checks the draft and sends it back once with the failures listed | `{"text", "points", "citations"}` |
+| `writer` | graph `writer` node | nano, gpt-5.4 on the critic's retry | Persona + grounding rules + JSON schema; **reflection**: the critic node checks the draft and sends it back once with the failures listed | `{"text", "points", "citations"}` |
 | `triage` | `safety_llm.classify` (guard node) | gpt-5.4-nano | **Zero-shot classifier** with label definitions; "when unsure, choose the higher risk" | `{"risk", "escalation", "attack", "route"}` |
 | `sql_picker` | `sql_agent` | nano, gpt-5.4 on retry | **Tool selection from a fixed menu**; the model names a template and parameters, never SQL | `{"template", "params"}` |
 | `judge` | SLO run (`app/evals/slo.py`) | gpt-5.4 | **LLM-as-judge** with a 1–5 rubric | `{"score", "reason"}` |
@@ -41,8 +41,8 @@ anywhere else in the code.
    prompt injection, system-prompt extraction and jailbreaks before any model call.
 6. **PII never reaches a prompt.** The question and the history are redacted first
    (`app/agents/guards.py`, docs/MEMORY.md).
-7. **Small model first.** Classification and picking use gpt-5.4-nano. gpt-5.4 writes answers, judges,
-   and retries a failed SQL pick.
+7. **Small model first.** Classification, picking and the writer's first draft use gpt-5.4-nano.
+   gpt-5.4 rewrites a draft the critic sent back, retries a failed SQL pick, and judges.
 8. **Rules first, model second.** Triage is rules OR-ed with the model, so the model can only make a
    question safer (higher risk), never wave through something the rules caught.
 
