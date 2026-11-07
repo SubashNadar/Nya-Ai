@@ -82,6 +82,20 @@ date (IPC before 1 July 2024; BNS, BNSS and BSA from then); SQL tables `acts`, `
 Expected section counts: BNS 358, BNSS 531, BSA 170, IPC 511 numbered sections. Langfuse login on
 first start: `admin@nya.local` / `change-me-admin` (change the values in `docker-compose.yml`).
 
+## Cost tracking
+
+Every Azure call is a Langfuse generation with its token usage and cost: chat calls in
+`app/agents/llm.py` (named `safety classify`, `sql pick`, `plan draft`, or `azure <model>` for the
+graph's writer, router and critic), embeddings during ingestion (`embed BNS` ...) and the query
+embedding of every library search (`embed query`, tokens counted with tiktoken). Cost is computed in
+`app/core/costs.py` from the `PRICE_*` settings (USD per 1M tokens). They are placeholders (0) until
+you copy your prices from the Azure OpenAI pricing page into `.env`; usage is recorded either way.
+
+```bash
+uv run nya-agent cost                      # tokens and cost per day and per model, and the latest traces
+uv run nya-agent cost --register-prices    # also write the PRICE_* values into Langfuse's model table
+```
+
 ## Tests and static analysis
 
 ```bash
@@ -91,7 +105,8 @@ uv run ruff format --check .  # formatting, 120 columns
 uv run pylint app             # 10.00/10 on 2026-11-01
 ```
 
-The Postgres tests ingest a synthetic fixture with a mock embedding into the `nya_test` database and
+`tests/conftest.py` blanks the Azure and Langfuse settings, so tests never call Azure or write traces
+even when `.env` has real keys. The Postgres tests ingest a synthetic fixture with a mock embedding into the `nya_test` database and
 are skipped when the database is not running. No Azure key is needed for tests.
 
 ## Notes

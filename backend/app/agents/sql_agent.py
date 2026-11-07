@@ -109,6 +109,7 @@ def pick(question: str, attempt: int = 0) -> tuple[str, dict] | None:
             {"role": "user", "content": f"<question>{question}</question>"},
         ],
         deployment=s.AZURE_STRONG_DEPLOYMENT if attempt else s.AZURE_SMALL_DEPLOYMENT,
+        name="sql pick",
     )
     if out and _valid(out.get("template"), out.get("params") or {}):
         return out["template"], out["params"]

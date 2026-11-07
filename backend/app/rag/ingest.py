@@ -12,6 +12,7 @@ from llama_index.core.schema import Document, TextNode
 from llama_index.readers.file import PDFReader
 from sqlalchemy.engine import Engine
 
+from app.core import costs
 from app.core import observability as obs
 from app.core.paths import RAW_DIR
 from app.rag import tables
@@ -164,6 +165,7 @@ def _ingest(code, engine, embed, pdf, pages, source_url, vector_store, docstore,
             docstore_strategy=DocstoreStrategy.UPSERTS,
         )
         written = pipeline.run(documents=[doc])
+        costs.record_embeddings(f"embed {code}", [n.get_content(metadata_mode="embed") for n in written])
         job.stage("embed", f"embedded={len(written)} (0 means unchanged since last run)", embedded=len(written))
         job.stage("index", "pgvector + full-text index updated")
 

@@ -59,6 +59,15 @@ Nya-AI is the only product.
 
 ## Log (newest first)
 
+- **2026-11-07** — Cost tracking (sprint task 22): every Azure chat call, ingestion embedding and
+  search query embedding is a Langfuse generation with token usage and cost (`app/core/costs.py`).
+  Prices are `PRICE_*` settings in USD per 1M tokens, placeholders (0) until the owner copies them from
+  the Azure pricing page. `nya-agent cost` reads usage and cost per day, model and trace back from
+  Langfuse; `--register-prices` writes the prices into Langfuse's model table. Checked with one nano
+  call (13 in, 4 out). `tests/conftest.py` now blanks the Azure and Langfuse keys, so tests stay
+  offline with a real `.env` (82 passed, 9 s; the three API tests and H44 that failed with real keys
+  now pass, H44 is a known gap until the test DB has the whole BSA).
+
 - **2026-11-07** — First real ingestion of the four acts with Azure (embeddings 1536 dims, gpt-5.4-nano
   smoke call ok). The law library now lives in the owner's local Postgres 16 + pgvector 0.8.3 on port
   9000, database `nya-ai` (`VECTOR_DATABASE_URL=postgresql+psycopg://subash@localhost:9000/nya-ai`;

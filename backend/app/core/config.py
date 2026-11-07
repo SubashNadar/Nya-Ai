@@ -47,6 +47,13 @@ class Settings(BaseSettings):
     AZURE_SMALL_DEPLOYMENT: str = "gpt-5.4-nano"  # router, safety classifier
     AZURE_STRONG_DEPLOYMENT: str = "gpt-5.4"  # answers, critic, LLM judge, Ragas
     EMBED_DIM: int = 1536
+    # Prices in USD per 1M tokens, for cost tracking in Langfuse. 0 means "not set": usage is still
+    # recorded, cost shows 0. Copy the numbers from your Azure OpenAI pricing page for your region.
+    PRICE_STRONG_INPUT_PER_1M: float = 0.0
+    PRICE_STRONG_OUTPUT_PER_1M: float = 0.0
+    PRICE_SMALL_INPUT_PER_1M: float = 0.0
+    PRICE_SMALL_OUTPUT_PER_1M: float = 0.0
+    PRICE_EMBED_INPUT_PER_1M: float = 0.0
 
     # R1 agent graph. When disabled, or when the law library is not reachable, chat falls back to the
     # rule engine ("basic mode"). Checkpoints let an answer held for advocate review resume later.

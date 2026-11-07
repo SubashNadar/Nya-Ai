@@ -39,7 +39,11 @@ When unsure between two risk levels, choose the higher."""
 
 
 def classify(question: str) -> dict | None:
-    raw = azure_chat([{"role": "system", "content": PROMPT}, {"role": "user", "content": question}], json_mode=True)
+    raw = azure_chat(
+        [{"role": "system", "content": PROMPT}, {"role": "user", "content": question}],
+        json_mode=True,
+        name="safety classify",
+    )
     if raw is None:
         return None
     try:

@@ -2421,6 +2421,7 @@ dependencies = [
     { name = "python-jose", extra = ["cryptography"] },
     { name = "razorpay" },
     { name = "sqlalchemy" },
+    { name = "tiktoken" },
     { name = "uvicorn", extra = ["standard"] },
 ]
 
@@ -2461,6 +2462,7 @@ requires-dist = [
     { name = "python-jose", extras = ["cryptography"], specifier = ">=3.3.0" },
     { name = "razorpay", specifier = ">=1.4.0" },
     { name = "sqlalchemy", specifier = ">=2.0.55" },
+    { name = "tiktoken", specifier = ">=0.14.0" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.32.0" },
 ]
 

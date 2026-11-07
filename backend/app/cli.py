@@ -1,4 +1,4 @@
-"""`uv run nya-agent <command>`: fetch, count, setup, ingest, golden, search, status, ask, answers, slo."""
+"""`uv run nya-agent <command>`: fetch, count, setup, ingest, golden, search, status, ask, answers, slo, cost."""
 
 import argparse
 from datetime import date
@@ -32,11 +32,23 @@ def main() -> None:
     )
     ans.add_argument("--splits", nargs="*", default=["golden", "holdout"])
     ans.add_argument("--out", type=Path, default=Path("run.jsonl"))
+    cost = sub.add_parser("cost", help="token use and cost per day and per trace, from Langfuse")
+    cost.add_argument("--days", type=int, default=14)
+    cost.add_argument("--traces", type=int, default=10, help="how many recent traces to list")
+    cost.add_argument("--register-prices", action="store_true", help="write the PRICE_* settings into Langfuse")
     from app.evals import run as slo_run
 
     slo_run.add_parser(sub)
     args = p.parse_args()
 
+    if args.cmd == "cost":
+        from app.evals import cost as cost_report
+
+        if args.register_prices:
+            for line in cost_report.register_prices():
+                print("registered", line)
+        print(cost_report.render(cost_report.daily(args.days), cost_report.per_trace(), args.traces))
+        return
     if args.cmd == "slo":
         slo_run.main(args)
         return

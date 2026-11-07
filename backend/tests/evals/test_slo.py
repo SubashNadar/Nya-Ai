@@ -146,6 +146,7 @@ KNOWN_DATA_GAPS = {"G23", "G24", "G25", "G30"}
 def test_sql_templates_match_ground_truth():
     from app.core.paths import SECTION_MAP_CSV
     from app.rag import tables
+    from app.rag.ingest import EXPECTED_SECTIONS
 
     engine = tables.get_engine(URL)
     try:
@@ -156,4 +157,9 @@ def test_sql_templates_match_ground_truth():
     tables.setup(engine, vector=False)
     tables.load_section_map(engine, SECTION_MAP_CSV)
     r = slo.score_sql(engine)
-    assert {f["id"] for f in r["failures"]} <= KNOWN_DATA_GAPS
+    known = set(KNOWN_DATA_GAPS)
+    with engine.connect() as conn:
+        bsa = conn.execute(text("select count(*) from sections where act = 'BSA'")).scalar()
+    if bsa < EXPECTED_SECTIONS["BSA"]:
+        known.add("H44")  # counts BSA sections, so it needs the whole BSA ingested (evals/cases/sql.json)
+    assert {f["id"] for f in r["failures"]} <= known

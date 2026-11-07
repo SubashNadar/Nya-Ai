@@ -21,6 +21,7 @@ from llama_index.core.vector_stores import (
 from pydantic import BaseModel
 from sqlalchemy.engine import Engine
 
+from app.core import costs
 from app.rag import tables
 from app.rag.acts import ACTS, acts_in_force
 
@@ -123,6 +124,7 @@ class LawLibrary:
             # from loading its default OpenAI model.
             llm=MockLLM(),
         ).retrieve(question)
+        costs.record_embeddings("embed query", [question])
 
         seen = {(e.act, e.section) for e in evidence}
         for hit in fused:

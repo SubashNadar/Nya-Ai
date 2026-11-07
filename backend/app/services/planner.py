@@ -88,7 +88,8 @@ def draft(db: Session, payload: PlanDraftIn, user: User | None) -> PlanDraftOut:
         [
             {"role": "system", "content": PROMPT},
             {"role": "user", "content": f"<conversation>\n{convo}\n</conversation>"},
-        ]
+        ],
+        name="plan draft",
     )
     if not out or not isinstance(out.get("topic"), str) or not out["topic"].strip():
         return fallback
