@@ -59,6 +59,22 @@ Nya-AI is the only product.
 
 ## Log (newest first)
 
+- **2026-11-07** — First real ingestion of the four acts with Azure (embeddings 1536 dims, gpt-5.4-nano
+  smoke call ok). The law library now lives in the owner's local Postgres 16 + pgvector 0.8.3 on port
+  9000, database `nya-ai` (`VECTOR_DATABASE_URL=postgresql+psycopg://subash@localhost:9000/nya-ai`;
+  start it with `conda activate python_env` and `pg_ctl -D /users/subash/pg-data -l logfile start -o
+  "-p 9000"`). Docker is still used for Langfuse and the `nya_test` test database on 5433. Section
+  counts confirmed on the real PDFs: BNS 358, BNSS 531, BSA 170, IPC 511 numbered (555 with 44
+  lettered). Ingested: BNS 358 sections/380 nodes, BNSS 531/547, BSA 170/178, IPC 555/566, about 18
+  minutes in all. Golden check PASS (23 found, 0 missing, 10 outside R0). Searches filter by date
+  correctly but rank weakly: "My phone was stolen in March 2024" as of 2024-03-12 gives IPC 378/379
+  at ranks 3 and 5 behind IPC 410/411 (stolen property); as of 2024-08-01 BNS 303 is rank 4 behind
+  BNS 317. Parser fix: BNSS's schedules (offence table, forms) were filed under section 531 and broke
+  the 8192-token embedding limit; schedules after the last section are now left out, over-long pieces
+  split at line breaks, and `PARSER_VERSION` in the act document re-embeds acts when the parser
+  changes. Tests that read fixtures now use UTF-8 (they failed on Windows). Known: three
+  `tests/api/test_feedback_plan_library.py` tests fail when `.env` has an Azure key (they assume none).
+
 - **2026-11-06** — Law library screen `/library` (advocates; orb menu "Law library"): readiness checks
   (pgvector, Azure key, PDFs), the LlamaIndex pipeline stages live from the job rows, acts table with
   "Ingest selected", and "Test retrieval" via new `POST /api/library/search`, which calls the agent's

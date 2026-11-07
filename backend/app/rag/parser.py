@@ -50,6 +50,13 @@ CHAPTER = re.compile(r"^\s*CHAPTER\s+(?P<num>[IVXLC]+[A-Z]?)\s*\n\s*(?P<title>[^
 # Amendment footnotes India Code prints at the foot of a page, e.g. "1. Subs. by Act 5 of 2009".
 FOOTNOTE = re.compile(r"^\s*\d{1,2}\.\s+(?:Subs|Ins|Omitted|Rep|Added|The words|Cl|Sub-section)\b.*$", re.MULTILINE)
 SUBSECTION = re.compile(r"(?=\(\d{1,2}\)\s)")
+# A schedule heading on its own line, e.g. "THE FIRST SCHEDULE" (BNSS) or "THE SCHEDULE" (BSA). The
+# schedules are printed after the last section; they are tables and forms, not part of that section.
+# Bump when the parser's output changes. It is part of the act document's metadata, so the
+# document's hash changes and the ingestion pipeline re-splits and re-embeds acts already stored.
+PARSER_VERSION = 2
+
+SCHEDULE = re.compile(r"^[ \t]*THE[ \t]+(?:[A-Z]+[ \t]+)?SCHEDULE[ \t]*$", re.MULTILINE)
 
 
 @dataclass
@@ -88,6 +95,7 @@ class SectionNodeParser(NodeParser):
     def split_act(self, doc: BaseNode) -> list[TextNode]:
         meta = dict(doc.metadata)
         page_starts: list[list[Any]] = meta.pop("page_starts", None) or []
+        meta.pop("parser_version", None)
         act = meta["act"]
         text = FOOTNOTE.sub("", doc.get_content())
         for printed, fixed in ERRATA.get(act, []):
@@ -95,13 +103,17 @@ class SectionNodeParser(NodeParser):
 
         chapters = [(m.start(), m.group("num"), m.group("title").strip()) for m in CHAPTER.finditer(text)]
         starts = self._section_starts(text)
+        # Schedules after the last section start (the contents page lists them too, before section 1).
+        last = max((s.pos for s in starts), default=len(text))
+        schedules = [m.start() for m in SCHEDULE.finditer(text) if m.start() > last]
 
         nodes: list[TextNode] = []
         for i, m in enumerate(starts):
             # Sections repealed as a range share one start; each gets the range's text.
             end = next((s.pos for s in starts[i + 1 :] if s.pos > m.pos), len(text))
-            # A chapter heading printed between two sections belongs to the next one.
-            end = min([end] + [pos for pos, _, _ in chapters if m.pos < pos < end])
+            # A chapter heading printed between two sections belongs to the next one; a schedule to none.
+            breaks = [pos for pos, _, _ in chapters] + schedules
+            end = min([end] + [pos for pos in breaks if m.pos < pos < end])
             body = re.sub(r"[ \t]+", " ", text[m.pos : end]).strip()
             num, heading = m.num, m.heading
             chapter = next(((c, t) for pos, c, t in reversed(chapters) if pos < m.pos), (None, None))
@@ -185,6 +197,8 @@ class SectionNodeParser(NodeParser):
         if len(pieces) > 1 and not pieces[0].lstrip().startswith("("):
             pieces[1] = pieces[0] + pieces[1]
             pieces = pieces[1:]
+        # A piece with no sub-section markers can still be too long (a table); split it at line breaks.
+        pieces = [chunk for piece in pieces for chunk in self._split_lines(piece)]
         parts: list[str] = []
         cur = ""
         for piece in pieces:
@@ -196,6 +210,21 @@ class SectionNodeParser(NodeParser):
         if cur.strip():
             parts.append(cur.strip())
         return parts
+
+    def _split_lines(self, piece: str) -> list[str]:
+        if approx_tokens(piece) <= self.max_tokens:
+            return [piece]
+        chunks: list[str] = []
+        cur = ""
+        for line in piece.splitlines(keepends=True):
+            if cur and approx_tokens(cur + line) > self.max_tokens:
+                chunks.append(cur)
+                cur = line
+            else:
+                cur += line
+        if cur.strip():
+            chunks.append(cur)
+        return chunks
 
     @staticmethod
     def _page_at(page_starts: list[list[Any]], offset: int) -> str | None:
@@ -213,4 +242,4 @@ def merge_pages(pages: list[Document], metadata: dict[str, Any]) -> Document:
     for d in pages:
         page_starts.append([len(text), d.metadata.get("page_label", "")])
         text += d.get_content() + "\n"
-    return Document(text=text, metadata={**metadata, "page_starts": page_starts})
+    return Document(text=text, metadata={**metadata, "page_starts": page_starts, "parser_version": PARSER_VERSION})

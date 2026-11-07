@@ -19,7 +19,7 @@ from app.rag.ingest import ingest_act
 from app.rag.retrieve import LawLibrary
 
 URL = os.environ.get("NYA_TEST_DATABASE_URL", "postgresql+psycopg://nya:nya@localhost:5433/nya_test")
-FIXTURE = (Path(__file__).parent / "fixtures" / "sample_act.txt").read_text()
+FIXTURE = (Path(__file__).parent / "fixtures" / "sample_act.txt").read_text(encoding="utf-8")
 
 
 @pytest.fixture(scope="module")
@@ -109,7 +109,8 @@ def test_golden_check(lib, tmp_path):
     md = tmp_path / "g.md"
     md.write_text(
         "| 1 | q | Low | rag | none | BNS §3A |\n| 2 | q | Low | rag | none | BNS §999 |\n"
-        "| 3 | q | Low | rag | none | BSA §63 |\n| 4 | q | Low | rag | none | RTI Act §7 |\n"
+        "| 3 | q | Low | rag | none | BSA §63 |\n| 4 | q | Low | rag | none | RTI Act §7 |\n",
+        encoding="utf-8",
     )
     r = check(engine, md)
     assert [(x.act, x.section) for x in r.found] == [("BNS", "3A")]

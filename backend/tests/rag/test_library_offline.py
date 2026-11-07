@@ -7,10 +7,10 @@ from llama_index.core.schema import Document
 
 from app.evals.golden import parse_golden
 from app.rag.acts import ACTS, OPEN_END, acts_in_force
-from app.rag.parser import SectionNodeParser, merge_pages
+from app.rag.parser import SectionNodeParser, approx_tokens, merge_pages
 from app.rag.retrieve import section_refs
 
-FIXTURE = (Path(__file__).parent / "fixtures" / "sample_act.txt").read_text()
+FIXTURE = (Path(__file__).parent / "fixtures" / "sample_act.txt").read_text(encoding="utf-8")
 META = {"act": "BNS", "effective_from": "2024-07-01", "effective_to": OPEN_END, "source_url": "test"}
 
 
@@ -171,7 +171,8 @@ def test_parse_golden_table(tmp_path):
         "| 1 | Theft? | Low | rag | none | BNS §303 |\n"
         "| 15 | WhatsApp? | Medium | rag | none | BSA §§61, 63 |\n"
         "| 29 | 498A? | Medium | hybrid | none | `section_map` → BNS §§85–86 text |\n"
-        "| 11 | Consumer? | Low | rag | none | CPA 2019 §2(7) |\n"
+        "| 11 | Consumer? | Low | rag | none | CPA 2019 §2(7) |\n",
+        encoding="utf-8",
     )
     got = {(r.query, r.act, r.section) for r in parse_golden(md)}
     assert got == {
@@ -192,3 +193,31 @@ def test_long_runs_of_blank_lines_parse_quickly():
     start = time.monotonic()
     assert list(_sections(text)) == ["1", "3"]
     assert time.monotonic() - start < 2
+
+
+def test_schedules_after_the_last_section_are_not_part_of_it():
+    text = (
+        "1. Short title.—This Act may be called the Sanhita.\n"
+        "2. Repeal and savings.\n"
+        "THE FIRST SCHEDULE\n"
+        "THE SECOND SCHEDULE\n"
+        "1. Short title.—This Act may be called the Sanhita.\n"
+        "2. Repeal and savings.—The old Code is repealed.\n"
+        "THE FIRST SCHEDULE\n"
+        "CLASSIFICATION OF OFFENCES\n"
+        "Section Offence Punishment Cognizable\n"
+    )
+    nodes = SectionNodeParser().split_act(Document(text=text, metadata=META))
+    assert [n.metadata["section"] for n in nodes] == ["1", "2"]
+    assert nodes[1].text.endswith("The old Code is repealed.")
+    assert "SCHEDULE" not in nodes[1].text
+
+
+def test_a_long_table_without_sub_sections_is_split_at_lines():
+    rows = "".join(f"Row {i} offence punishment cognizable bailable magistrate.\n" for i in range(200))
+    text = f"1. Table.—The table follows.\n{rows}2. Next.—Text.\n"
+    parser = SectionNodeParser(max_tokens=100)
+    parts = [n for n in parser.split_act(Document(text=text, metadata=META)) if n.metadata["section"] == "1"]
+    assert len(parts) > 1
+    assert all(approx_tokens(p.text) <= 100 for p in parts)
+    assert "Row 199" in parts[-1].text
