@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import ThemeToggle from '../components/ThemeToggle'
 
 export default function AccountPage() {
   const { user, logout } = useAuth()
@@ -20,6 +21,10 @@ export default function AccountPage() {
           <div className="text-[15px] font-bold">{displayName}</div>
           {user?.phone && <div className="mt-0.5 text-[13px] text-muted">+91 {user.phone}</div>}
         </div>
+      </div>
+
+      <div className="mt-5">
+        <ThemeToggle />
       </div>
 
       <nav aria-label="Information pages" className="mt-5 max-w-[480px] divide-y divide-line overflow-hidden rounded-[20px] border border-line bg-surface">

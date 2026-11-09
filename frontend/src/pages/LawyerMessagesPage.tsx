@@ -126,7 +126,7 @@ export default function LawyerMessagesPage() {
               ) : (
                 <div
                   key={m.id}
-                  className="max-w-[80%] self-end rounded-[18px_18px_6px_18px] bg-success-text px-4 py-3 text-sm leading-[1.55] text-[#EAF3EE] sm:max-w-[65%]"
+                  className="max-w-[80%] self-end rounded-[18px_18px_6px_18px] bg-success-text px-4 py-3 text-sm leading-[1.55] text-white sm:max-w-[65%]"
                 >
                   {m.text}
                 </div>

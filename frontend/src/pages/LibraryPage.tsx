@@ -154,7 +154,7 @@ export default function LibraryPage() {
               {current ? `LAST RUN · ${current.act} · ${current.status.toUpperCase()}` : 'NO RUNS YET'}
             </span>
           </div>
-          <div className="overflow-x-auto rounded-2xl border border-line bg-navy-950/50 p-4">
+          <div className="overflow-x-auto rounded-2xl border border-line bg-well/50 p-4">
             <ol className="flex min-w-[760px] items-stretch gap-2">
               {STAGES.map((s, i) => {
                 const done = at > i
@@ -226,7 +226,7 @@ export default function LibraryPage() {
               </thead>
               <tbody>
                 {lib.acts.map((a) => (
-                  <tr key={a.code} className="border-t border-line transition-colors hover:bg-white/[0.02]">
+                  <tr key={a.code} className="border-t border-line transition-colors hover:bg-fg/[0.03]">
                     <td className="px-4 py-3">
                       <input
                         id={`act-${a.code}`}
@@ -234,7 +234,7 @@ export default function LibraryPage() {
                         checked={picked.includes(a.code)}
                         onChange={() => toggle(a.code)}
                         aria-label={`Select ${a.title}`}
-                        className="size-4 accent-[#D9B56E]"
+                        className="size-4 accent-[rgb(var(--ring))]"
                       />
                     </td>
                     <td className="px-3 py-3">

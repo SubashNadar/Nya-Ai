@@ -80,7 +80,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-[100dvh] bg-bg font-body text-ink">
-      <div className="relative hidden w-[46%] flex-none flex-col justify-between overflow-hidden bg-navy-950 p-12 text-white lg:flex">
+      <div data-theme="dark" className="relative hidden w-[46%] flex-none flex-col justify-between overflow-hidden bg-navy-950 p-12 text-white lg:flex">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:44px_44px] [mask-image:radial-gradient(ellipse_at_top_left,black,transparent_75%)]"

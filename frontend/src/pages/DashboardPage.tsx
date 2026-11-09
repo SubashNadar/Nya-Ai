@@ -53,7 +53,7 @@ function Clock({ c, i }: { c: DeadlineClock; i: number }) {
           </>
         )}
       </div>
-      <div className="col-span-full h-1 overflow-hidden rounded-full bg-white/10">
+      <div className="col-span-full h-1 overflow-hidden rounded-full bg-fg/10">
         <motion.span
           className="block h-full rounded-full bg-gradient-to-r from-success-text via-brass to-warn-text"
           initial={reduce ? false : { width: 0 }}
@@ -122,7 +122,7 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        <dl className="fx-stagger grid grid-cols-1 border-y border-white/15 sm:grid-cols-3">
+        <dl className="fx-stagger grid grid-cols-1 border-y border-fg/15 sm:grid-cols-3">
           {[
             { v: <CountUp value={data.questions_answered} />, l: 'Questions answered free' },
             {

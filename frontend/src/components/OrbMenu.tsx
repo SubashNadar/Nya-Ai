@@ -93,7 +93,7 @@ export function OrbBar({ unreadThreads }: { unreadThreads: number }) {
 
   return (
     <>
-      <header className="relative z-50 flex h-[60px] flex-none items-center gap-3 border-b border-line bg-navy-950/85 px-3 backdrop-blur md:px-5">
+      <header className="relative z-50 flex h-[60px] flex-none items-center gap-3 border-b border-line bg-surface/85 px-3 backdrop-blur md:px-5">
         <div className="relative size-11 flex-none">
           <button
             ref={orbRef}
@@ -115,6 +115,7 @@ export function OrbBar({ unreadThreads }: { unreadThreads: number }) {
               <motion.ul
                 id="orb-menu"
                 aria-label="Sections"
+                data-theme="dark"
                 className="absolute left-1/2 top-1/2 m-0 list-none p-0"
                 initial="closed"
                 animate="open"
@@ -180,6 +181,7 @@ export function OrbBar({ unreadThreads }: { unreadThreads: number }) {
                   )
                 })}
                 <motion.li
+                  data-theme="dark"
                   className="absolute w-[230px]"
                   style={{ left: -18, top: radius + 44 }}
                   variants={{ closed: { opacity: 0, y: -8 }, open: { opacity: 1, y: 0 } }}
@@ -209,7 +211,7 @@ export function OrbBar({ unreadThreads }: { unreadThreads: number }) {
         </div>
 
         <button onClick={() => setOpen((o) => !o)} className="flex min-w-0 flex-col items-start leading-none" tabIndex={-1}>
-          <span className="font-display text-[20px] font-semibold leading-none text-brass-soft">
+          <span className="font-display text-[20px] font-semibold leading-none text-display">
             Nya<span className="font-mono text-[14px] text-brass-light">·AI</span>
           </span>
           <AnimatePresence mode="wait" initial={false}>
@@ -219,7 +221,7 @@ export function OrbBar({ unreadThreads }: { unreadThreads: number }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: reduce ? 0 : 0.2 }}
-              className="mt-[5px] truncate font-mono text-[10.5px] tracking-[0.14em] text-white/55"
+              className="mt-[5px] truncate font-mono text-[10.5px] tracking-[0.14em] text-fg/55"
             >
               § {(current?.label ?? 'Indian law, cited').toUpperCase()}
             </motion.span>
@@ -228,19 +230,19 @@ export function OrbBar({ unreadThreads }: { unreadThreads: number }) {
 
         <div className="flex-1" />
 
-        <div className="flex items-center gap-2.5 rounded-full border border-white/10 bg-white/5 py-1 pl-1 pr-1.5">
+        <div className="flex items-center gap-2.5 rounded-full border border-fg/10 bg-fg/5 py-1 pl-1 pr-1.5">
           <div className="grid size-8 flex-none place-items-center rounded-full bg-gradient-to-br from-brass-light to-brass-dark text-[12px] font-bold text-navy-950">
             {user?.initials ?? '?'}
           </div>
           <div className="hidden min-w-0 sm:block">
-            <div className="max-w-[140px] truncate text-[12.5px] font-semibold leading-tight text-white">{user?.name ?? ''}</div>
-            <div className="text-[10.5px] leading-tight text-white/45">{user?.role === 'lawyer' ? 'Advocate' : 'Member'}</div>
+            <div className="max-w-[140px] truncate text-[12.5px] font-semibold leading-tight text-fg">{user?.name ?? ''}</div>
+            <div className="text-[10.5px] leading-tight text-fg/50">{user?.role === 'lawyer' ? 'Advocate' : 'Member'}</div>
           </div>
           <button
             onClick={logout}
             aria-label="Sign out"
             title="Sign out"
-            className="rounded-full p-1.5 text-white/50 transition-colors hover:bg-white/10 hover:text-white"
+            className="rounded-full p-1.5 text-fg/50 transition-colors hover:bg-fg/10 hover:text-fg"
           >
             <LogOut className="size-4" />
           </button>

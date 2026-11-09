@@ -93,7 +93,23 @@ Timeline. This replaces the Orbit sidebar and phone tab bar; other Orbit layouts
   the law in force for the agent and starts the clocks.
 - Screens: `/mnt/project-files/nya-ai/orbit-dial-timeline/`.
 
+## Ivory theme, Orbit navy as dark mode (2026-11-09, branch `theme-ivory`, awaiting approval)
+
+The owner found the dark navy unpleasant and picked "Parchment & Ink" from three light options. Colour
+only: layouts, the Orbit Dial menu, fonts and components are unchanged.
+
+- Every colour token is a CSS variable (`src/index.css`, generated from one table); Tailwind reads them as
+  `rgb(var(--x) / <alpha-value>)`, so opacity modifiers still work. `:root` is Ivory; `[data-theme="dark"]`
+  is the old Orbit navy, on `<html>` (the Account / Profile "Dark mode" switch, stored per device) or on a
+  panel that should stay dark.
+- Ivory: page #FAF7F0, cards #FFFFFF, soft #F3EEE3, wells #EEE8DB, borders #E6DFD1, ink #1C2430, muted
+  #5B6472, primary buttons navy #1F3A5F with white text, brass #A8792E (accent text #7D5A20 for contrast),
+  success #2F7D5B, warning #8A5A12, danger #C0392B. Soft diffuse card shadows; no grid, no aurora.
+- New tokens: `fg` (high-emphasis text and hairlines, was `text-white`), `display` (display headings, was
+  `text-brass-soft`), `well` (inset panels and fields, was `bg-navy-950/..`), `info`, `danger`.
+- Kept dark on purpose: the sign-in hero panel and the orb-menu overlay (`data-theme="dark"` on their
+  containers). Brand `navy-*` colours are fixed in both themes.
+
 ## Not done yet
 
-- No dark mode. The tokens are plain hex, so a dark mode would first move them to CSS variables.
 - The Orbit canvas artifact still shows the old navy theme; the app is now the reference for colour.

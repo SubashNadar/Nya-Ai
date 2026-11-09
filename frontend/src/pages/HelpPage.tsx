@@ -144,7 +144,7 @@ export default function HelpPage() {
             Message support
           </Link>
         </Panel>
-        <section className="rounded-2xl border border-[#E5484D]/45 bg-surface/90 p-5">
+        <section className="rounded-2xl border border-danger/45 bg-surface/90 p-5">
           <div className="font-semibold">Emergency</div>
           <p className="mt-1 text-[14px] text-body2">
             Police, fire, ambulance: <strong className="font-mono text-ink">112</strong>. Women's helpline:{' '}

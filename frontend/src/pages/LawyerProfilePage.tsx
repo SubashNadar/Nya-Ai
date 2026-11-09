@@ -1,8 +1,13 @@
+import ThemeToggle from '../components/ThemeToggle'
+
 export default function LawyerProfilePage() {
   return (
     <div className="flex-1 overflow-y-auto px-5 py-7 md:px-8">
       <h1 className="font-heading text-2xl font-extrabold md:text-[28px]">My profile</h1>
       <div className="mt-1 text-sm text-muted">This is what clients see when they find you</div>
+      <div className="mt-5">
+        <ThemeToggle />
+      </div>
 
       <div className="mt-5 max-w-[640px] rounded-[22px] border border-line bg-surface p-[26px]">
         <div className="flex items-center gap-[18px]">

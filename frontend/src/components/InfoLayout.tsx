@@ -16,7 +16,7 @@ export function InfoLayout() {
 
   return (
     <div className="min-h-[100dvh] text-ink">
-      <header className="sticky top-0 z-20 border-b border-line bg-navy-950/85 backdrop-blur">
+      <header className="sticky top-0 z-20 border-b border-line bg-surface/85 backdrop-blur">
         <div className="mx-auto flex max-w-[1120px] flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 md:px-8">
           <Link to={back.to} aria-label="Nya-AI home">
             <BrandLockup inverted />

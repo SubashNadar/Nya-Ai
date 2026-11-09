@@ -1,6 +1,6 @@
 // Nya-AI mark: scales of justice inside a dashed orbit ring, with a satellite dot.
 export function LogoMark({ size = 38, tone = 'navy' }: { size?: number; tone?: 'navy' | 'brass' }) {
-  const stroke = tone === 'brass' ? '#D9B56E' : '#1F3A5F'
+  const stroke = tone === 'brass' ? 'rgb(var(--brass-light))' : '#1F3A5F'
   return (
     <svg
       aria-hidden="true"
@@ -27,12 +27,12 @@ export function BrandLockup({ inverted = false }: { inverted?: boolean }) {
       <LogoMark tone={inverted ? 'brass' : 'navy'} />
       <div className="flex flex-col leading-none">
         <span
-          className={`font-display text-[21px] font-semibold leading-none ${inverted ? 'text-brass-soft' : 'text-ink'}`}
+          className={`font-display text-[21px] font-semibold leading-none ${inverted ? 'text-display' : 'text-ink'}`}
         >
           Nya
           <span className={`font-mono text-[15px] ${inverted ? 'text-brass-light' : 'text-brass-dark'}`}>·AI</span>
         </span>
-        <span className={`mt-[4px] font-mono text-[10.5px] tracking-[0.12em] ${inverted ? 'text-white/55' : 'text-muted'}`}>
+        <span className={`mt-[4px] font-mono text-[10.5px] tracking-[0.12em] ${inverted ? 'text-fg/55' : 'text-muted'}`}>
           INDIAN LAW, CITED
         </span>
       </div>

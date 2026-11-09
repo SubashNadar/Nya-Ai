@@ -59,6 +59,12 @@ Nya-AI is the only product.
 
 ## Log (newest first)
 
+- **2026-11-09** — Branch `theme-ivory` (not on main until the owner approves screenshots): the owner
+  disliked the dark navy and picked "Parchment & Ink". Colour-only change: tokens are CSS variables,
+  Ivory by default, the Orbit navy kept as an optional dark mode (Account / Profile switch). Sign-in hero
+  and orb-menu overlay stay navy on purpose. Details in `docs/DESIGN.md`; Lovable prompts updated to match
+  (`docs/LOVABLE-PROMPT.md`).
+
 - **2026-11-07** — ADRs and sprint status: 11 architecture decisions as ADRs in `docs/adr/` (linked
   from `docs/DECISIONS.md`), and `docs/SPRINT-STATUS.md` with all 22 capstone tasks and their evidence.
   Open: task 8 (owner's Miro/Trello link), task 17 (official BPR&D IPC→BNS table: bprd.nic.in refuses

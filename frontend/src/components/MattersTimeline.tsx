@@ -9,12 +9,12 @@ const CUTOVER = new Date('2024-07-01T00:00:00')
 const DAY = 86_400_000
 
 export const STATUS: Record<MatterStatus, { label: string; cls: string; dot: string }> = {
-  answered: { label: 'ANSWERED', cls: 'border-brass/40 bg-brass/10 text-brass-light', dot: '#D9B56E' },
+  answered: { label: 'ANSWERED', cls: 'border-brass/40 bg-brass/10 text-brass-light', dot: 'rgb(var(--brass))' },
   reviewed: { label: 'ADVOCATE CHECKED', cls: 'border-success-text/40 bg-success-bg text-success-text', dot: '#5CC79A' },
-  advocate_review: { label: 'ADVOCATE REVIEW', cls: 'border-sky-300/40 bg-sky-300/10 text-sky-300', dot: '#7DD3FC' },
+  advocate_review: { label: 'ADVOCATE REVIEW', cls: 'border-info/40 bg-info/10 text-info', dot: 'rgb(var(--info))' },
   lawyer_suggested: { label: 'LAWYER SUGGESTED', cls: 'border-success-text/40 bg-success-bg text-success-text', dot: '#5CC79A' },
   emergency: { label: 'EMERGENCY · 112', cls: 'border-warn-text/40 bg-warn-text/10 text-warn-text', dot: '#E2876B' },
-  refused: { label: 'NOT ANSWERED', cls: 'border-white/15 bg-white/5 text-white/60', dot: '#8C9AB3' },
+  refused: { label: 'NOT ANSWERED', cls: 'border-fg/15 bg-fg/5 text-fg/60', dot: 'rgb(var(--faint))' },
 }
 
 const W = 1000
@@ -71,7 +71,7 @@ export function MattersTimeline({ matters }: { matters: Matter[] }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="overflow-x-auto rounded-2xl border border-line bg-navy-950/50">
+      <div className="overflow-x-auto rounded-2xl border border-line bg-well/50">
         <svg viewBox={`0 0 ${W} ${H}`} className="block w-full min-w-[720px]" role="img" aria-label="Your questions placed by the date of the incident">
           <rect x={PAD} y={18} width={Math.max(0, cut - PAD)} height={H - 36} fill="rgba(226,135,107,0.07)" />
           <rect x={cut} y={18} width={W - PAD - cut} height={H - 36} fill="rgba(92,199,154,0.045)" />
@@ -81,7 +81,7 @@ export function MattersTimeline({ matters }: { matters: Matter[] }) {
           <text x={cut + 8} y={38} className="fill-success-text font-mono text-[10.5px] tracking-[0.12em]">
             BNS · BNSS · BSA IN FORCE
           </text>
-          <line x1={cut} y1={18} x2={cut} y2={H - 18} stroke="#D9B56E" strokeWidth={1.5} strokeDasharray="4 4" />
+          <line x1={cut} y1={18} x2={cut} y2={H - 18} stroke="rgb(var(--ring))" strokeWidth={1.5} strokeDasharray="4 4" />
           <text x={cut - 6} y={H - 26} textAnchor="end" className="fill-brass-light font-mono text-[10.5px]">
             1 JUL 2024
           </text>
@@ -102,7 +102,7 @@ export function MattersTimeline({ matters }: { matters: Matter[] }) {
             return (
               <g>
                 <line x1={tx} y1={18} x2={tx} y2={H - 18} stroke="rgba(238,242,248,0.25)" strokeDasharray="2 4" />
-                <text x={tx - 6} y={H - 26} textAnchor="end" className="fill-white/70 font-mono text-[10px]">
+                <text x={tx - 6} y={H - 26} textAnchor="end" className="fill-fg/70 font-mono text-[10px]">
                   TODAY
                 </text>
               </g>
@@ -128,13 +128,13 @@ export function MattersTimeline({ matters }: { matters: Matter[] }) {
               >
                 <line x1={nx} y1={AXIS} x2={nx} y2={ny} stroke={dot} strokeOpacity={on ? 0.9 : 0.45} />
                 <circle cx={nx} cy={AXIS} r={3} fill={dot} />
-                <circle cx={nx} cy={ny} r={on ? 8 : 6} fill={dot} stroke="#0E1A2E" strokeWidth={2} />
+                <circle cx={nx} cy={ny} r={on ? 8 : 6} fill={dot} stroke="rgb(var(--surface))" strokeWidth={2} />
                 {on && <circle cx={nx} cy={ny} r={14} fill="none" stroke={dot} strokeOpacity={0.5} />}
                 <text
                   x={right ? nx - 14 : nx + 14}
                   y={ny + 4}
                   textAnchor={right ? 'end' : 'start'}
-                  className={`text-[12.5px] ${on ? 'fill-white font-semibold' : 'fill-white/75'}`}
+                  className={`text-[12.5px] ${on ? 'fill-fg font-semibold' : 'fill-fg/75'}`}
                 >
                   {short(m.question)}
                 </text>
@@ -158,7 +158,7 @@ export function MattersTimeline({ matters }: { matters: Matter[] }) {
               onClick={() => setPicked(m.question_id)}
               aria-pressed={m.question_id === picked}
               className={`rounded-full border px-3 py-1 text-[12.5px] transition-colors ${
-                m.question_id === picked ? 'border-brass/60 bg-brass/10 text-white' : 'border-line text-body2 hover:text-ink'
+                m.question_id === picked ? 'border-brass/60 bg-brass/10 text-fg' : 'border-line text-body2 hover:text-ink'
               }`}
             >
               {short(m.question, 38)}

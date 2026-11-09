@@ -60,7 +60,7 @@ export default function LegalPage() {
               Answers may be incomplete or out of date. Always check the cited section on India Code, and talk to an
               advocate before acting.
             </p>
-            <p className="rounded-lg border border-[#E5484D]/45 p-3 text-ink">
+            <p className="rounded-lg border border-danger/45 p-3 text-ink">
               In an emergency, call <strong className="font-mono">112</strong>. Nya-AI cannot reach police, courts or
               anyone else for you.
             </p>
@@ -108,7 +108,7 @@ export default function LegalPage() {
                 To use any of these rights, <Link to="/contact" className="text-primary underline-offset-2 hover:underline">write to us</Link> with the topic “Privacy or data”.
               </p>
             </div>
-            <div className="rounded-xl border border-line bg-navy-950/50 p-4">
+            <div className="rounded-xl border border-line bg-well/50 p-4">
               <div className="font-mono text-[11px] tracking-[0.12em] text-primary">GRIEVANCE OFFICER</div>
               <div className="mt-2 font-semibold">[OFFICER NAME]</div>
               <div className="font-mono text-[13px] text-body2">[GRIEVANCE EMAIL]</div>

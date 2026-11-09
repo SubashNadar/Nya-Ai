@@ -2,8 +2,100 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme tokens (generated from one table; see tailwind.config.js). Ivory is the default; the
+   Orbit navy theme applies under [data-theme="dark"], on <html> or on any dark panel. */
 :root {
+  color-scheme: light;
+  --primary: 31 58 95;
+  --primary-hover: 42 75 120;
+  --primary-fg: 255 255 255;
+  --background: 250 247 240;
+  --foreground: 28 36 48;
+  --border: 230 223 209;
+  --input: 220 211 194;
+  --ring: 168 121 46;
+  --secondary: 243 238 227;
+  --secondary-fg: 28 36 48;
+  --destructive: 192 57 43;
+  --popover: 255 255 255;
+  --popover-fg: 28 36 48;
+  --brass: 168 121 46;
+  --brass-light: 125 90 32;
+  --brass-soft: 243 231 207;
+  --brass-dark: 107 74 23;
+  --soft: 243 238 227;
+  --line: 230 223 209;
+  --ink: 28 36 48;
+  --muted: 91 100 114;
+  --bg: 250 247 240;
+  --surface: 255 255 255;
+  --success-text: 47 125 91;
+  --success-bg: 229 242 235;
+  --success-dark: 37 107 76;
+  --success-border: 191 220 203;
+  --warn-text: 138 90 18;
+  --warn-bg: 251 241 222;
+  --warn-border: 235 211 166;
+  --focus: 168 121 46;
+  --faint: 111 119 133;
+  --body2: 58 68 82;
+  --body3: 42 51 64;
+  --scrollbar: 214 204 184;
+  --fg: 28 36 48;
+  --display: 28 36 48;
+  --info: 29 111 165;
+  --danger: 192 57 43;
+  --well: 238 232 219;
+  --shadow-card: 0 1px 2px rgba(28,36,48,0.04), 0 6px 20px -8px rgba(28,36,48,0.10);
+  --shadow-lift: 0 2px 6px rgba(28,36,48,0.06), 0 18px 40px -16px rgba(28,36,48,0.18);
+  --shadow-composer: 0 10px 30px -12px rgba(28,36,48,0.18);
+}
+
+[data-theme="dark"] {
   color-scheme: dark;
+  --primary: 217 181 110;
+  --primary-hover: 230 200 138;
+  --primary-fg: 10 20 36;
+  --background: 10 20 36;
+  --foreground: 243 245 249;
+  --border: 36 54 79;
+  --input: 43 63 92;
+  --ring: 217 181 110;
+  --secondary: 22 42 71;
+  --secondary-fg: 243 245 249;
+  --destructive: 229 72 77;
+  --popover: 15 30 51;
+  --popover-fg: 243 245 249;
+  --brass: 184 137 59;
+  --brass-light: 217 181 110;
+  --brass-soft: 246 238 223;
+  --brass-dark: 140 101 38;
+  --soft: 22 42 71;
+  --line: 36 54 79;
+  --ink: 243 245 249;
+  --muted: 169 180 196;
+  --bg: 10 20 36;
+  --surface: 15 30 51;
+  --success-text: 143 211 177;
+  --success-bg: 18 53 43;
+  --success-dark: 95 185 142;
+  --success-border: 31 85 67;
+  --warn-text: 232 201 138;
+  --warn-bg: 42 34 20;
+  --warn-border: 74 59 30;
+  --focus: 217 181 110;
+  --faint: 133 146 166;
+  --body2: 201 209 220;
+  --body3: 220 226 234;
+  --scrollbar: 43 63 92;
+  --fg: 255 255 255;
+  --display: 246 238 223;
+  --info: 125 211 252;
+  --danger: 229 72 77;
+  --well: 7 15 28;
+  --shadow-card: 0 1px 2px rgba(0,0,0,0.25), 0 4px 16px rgba(0,0,0,0.25);
+  --shadow-lift: 0 2px 4px rgba(0,0,0,0.3), 0 16px 40px rgba(0,0,0,0.45);
+  --shadow-composer: 0 8px 30px rgba(0,0,0,0.45);
 }
 
 * {
@@ -18,15 +110,19 @@ body,
 
 body {
   margin: 0;
-  background-color: #0a1424;
+  background-color: rgb(var(--bg));
+  color: rgb(var(--ink));
+  font-family: 'Figtree', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* The brass grid belongs to the dark Orbit theme only; Ivory is plain warm paper. */
+html[data-theme='dark'] body {
   background-image: linear-gradient(rgba(217, 181, 110, 0.045) 1px, transparent 1px),
     linear-gradient(90deg, rgba(217, 181, 110, 0.045) 1px, transparent 1px);
   background-size: 40px 40px;
   background-attachment: fixed;
-  color: #f3f5f9;
-  font-family: 'Figtree', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 h1,
@@ -44,7 +140,7 @@ h6 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2b3f5c;
+  background: rgb(var(--scrollbar));
   border-radius: 8px;
 }
 
@@ -55,7 +151,7 @@ h6 {
 input:focus,
 textarea:focus,
 select:focus {
-  outline: 2px solid #d9b56e;
+  outline: 2px solid rgb(var(--focus));
   outline-offset: 1px;
 }
 
@@ -65,8 +161,8 @@ button {
 
 /* ===================== Motion & controls kit (2026-11-06) ===================== */
 
-/* Aurora: slow-drifting navy, teal and brass light behind the Orbit grid. */
-body::before {
+/* Aurora: slow-drifting navy, teal and brass light behind the Orbit grid (dark theme only). */
+html[data-theme='dark'] body::before {
   content: '';
   position: fixed;
   inset: -20%;
@@ -123,10 +219,10 @@ a.rounded-full {
 
 /* Primary (brass) actions: glow on hover and a light sweep across. */
 .bg-primary:is(button, a) {
-  box-shadow: 0 0 0 0 rgba(217, 181, 110, 0);
+  box-shadow: 0 0 0 0 rgb(var(--ring) / 0);
 }
 .bg-primary:is(button, a):not(:disabled):hover {
-  box-shadow: 0 6px 24px -6px rgba(217, 181, 110, 0.55), 0 0 0 1px rgba(217, 181, 110, 0.35);
+  box-shadow: 0 6px 24px -6px rgb(var(--ring) / 0.55), 0 0 0 1px rgb(var(--ring) / 0.35);
 }
 .bg-primary:is(button, a)::after {
   content: '';
@@ -151,13 +247,13 @@ a.rounded-full {
 }
 .bg-surface:hover:not(nav, header, aside, input, textarea, select),
 [data-spot]:hover {
-  background-image: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(217, 181, 110, 0.085), transparent 45%);
+  background-image: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgb(var(--ring) / 0.085), transparent 45%);
 }
 [class*='rounded-[18px]'].bg-surface:hover,
 [class*='rounded-3xl'].bg-surface:hover,
 [class*='rounded-2xl'].bg-surface:hover {
-  border-color: rgba(217, 181, 110, 0.35);
-  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.6);
+  border-color: rgb(var(--ring) / 0.35);
+  box-shadow: var(--shadow-lift);
 }
 [data-tilt] {
   transform-style: preserve-3d;
@@ -170,7 +266,7 @@ input:focus:not(.bg-transparent),
 textarea:focus:not(.bg-transparent),
 select:focus:not(.bg-transparent) {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(217, 181, 110, 0.22), 0 0 24px -6px rgba(217, 181, 110, 0.45);
+  box-shadow: 0 0 0 3px rgb(var(--ring) / 0.22), 0 0 24px -6px rgb(var(--ring) / 0.45);
   transition: box-shadow 0.25s ease;
 }
 input,
@@ -207,7 +303,7 @@ select {
   z-index: -1;
   border-radius: inherit;
   padding: 1.5px;
-  background: conic-gradient(from var(--fx-angle, 0deg), transparent 0 70%, rgba(217, 181, 110, 0.95) 85%, rgba(120, 190, 255, 0.8) 92%, transparent 100%);
+  background: conic-gradient(from var(--fx-angle, 0deg), transparent 0 70%, rgb(var(--ring) / 0.95) 85%, rgba(120, 190, 255, 0.8) 92%, transparent 100%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -230,7 +326,7 @@ select {
 
 /* Skeleton shimmer for loading placeholders. */
 .fx-skeleton {
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.1) 40%, rgba(255, 255, 255, 0.04) 80%);
+  background: linear-gradient(90deg, rgb(var(--fg) / 0.04) 0%, rgb(var(--fg) / 0.08) 40%, rgb(var(--fg) / 0.04) 80%);
   background-size: 200% 100%;
   animation: fx-shimmer 1.4s ease-in-out infinite;
 }
@@ -241,7 +337,7 @@ select {
 
 /* Gradient text that slowly shifts (headline accents). */
 .fx-gradient-text {
-  background: linear-gradient(90deg, #d9b56e, #f2dca8, #8fc2ff, #d9b56e);
+  background: linear-gradient(90deg, rgb(var(--brass-light)), rgb(var(--brass)), rgb(var(--info)), rgb(var(--brass-light)));
   background-size: 300% 100%;
   -webkit-background-clip: text;
   background-clip: text;

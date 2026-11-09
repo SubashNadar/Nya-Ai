@@ -15,7 +15,7 @@ const TOPICS: { value: SupportTopic; label: string }[] = [
 ]
 
 const field =
-  'w-full rounded-lg border border-line bg-navy-950/60 px-3 py-2.5 text-[15px] text-ink placeholder:text-faint focus:border-primary focus:outline-none'
+  'w-full rounded-lg border border-line bg-well/60 px-3 py-2.5 text-[15px] text-ink placeholder:text-faint focus:border-primary focus:outline-none'
 
 export default function ContactPage() {
   const { user } = useAuth()
@@ -141,7 +141,7 @@ export default function ContactPage() {
           <div className="mt-2 font-semibold">[OFFICER NAME]</div>
           <div className="text-[13px] text-muted">[GRIEVANCE EMAIL] · reply within 7 days</div>
         </Panel>
-        <section className="rounded-2xl border border-[#E5484D]/45 bg-surface/90 p-5">
+        <section className="rounded-2xl border border-danger/45 bg-surface/90 p-5">
           <div className="font-semibold">In danger right now?</div>
           <p className="mt-1 text-[14px] text-body2">
             Call <strong className="font-mono text-ink">112</strong>. Women's helpline: <strong className="font-mono text-ink">181</strong>. This inbox is

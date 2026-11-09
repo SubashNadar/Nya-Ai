@@ -8,7 +8,9 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { AuthProvider } from './context/AuthContext'
 import { MotionConfig } from 'motion/react'
 import { installFx } from './lib/fx'
+import { applyTheme, getTheme } from './lib/theme'
 
+applyTheme(getTheme())
 installFx()
 
 createRoot(document.getElementById('root')!).render(

@@ -392,7 +392,7 @@ export default function ChatPage() {
                 <motion.div {...enter} className="flex flex-col items-center pt-2 text-center md:pt-10">
                   <LogoMark size={64} tone="brass" />
                   <div className={`${mono} mt-5 text-brass-light`}>Indian law, cited</div>
-                  <h1 className="mt-3 font-display text-[30px] font-semibold leading-tight text-brass-soft md:text-[38px]">
+                  <h1 className="mt-3 font-display text-[30px] font-semibold leading-tight text-display md:text-[38px]">
                     Namaste! I'm Nya-AI.
                   </h1>
                   <p className="mt-3 max-w-[560px] text-[15px] leading-[1.65] text-body2">

@@ -8,7 +8,7 @@ const GOALS = ['Understand my options', 'Get a notice drafted', 'Recover money',
 const STEPS = ['PLAN', 'SCHEDULE', 'PAY', 'CALL']
 
 const field =
-  'w-full rounded-lg border border-line bg-navy-950/60 px-3 py-2.5 text-[15px] text-ink placeholder:text-faint focus:border-primary focus:outline-none'
+  'w-full rounded-lg border border-line bg-well/60 px-3 py-2.5 text-[15px] text-ink placeholder:text-faint focus:border-primary focus:outline-none'
 
 export function StepBar({ current }: { current: number }) {
   return (
@@ -112,7 +112,7 @@ export default function ConsultPlanPage() {
             {questions.length > 0 && (
               <ol className="mt-3 flex flex-col gap-2">
                 {questions.map((q, i) => (
-                  <li key={i} className="flex items-start gap-2 rounded-lg border border-line bg-navy-950/40 px-3 py-2 text-[14.5px]">
+                  <li key={i} className="flex items-start gap-2 rounded-lg border border-line bg-well/40 px-3 py-2 text-[14.5px]">
                     <span className="font-mono text-[12px] text-primary">Q{i + 1}</span>
                     <span className="flex-1">{q}</span>
                     <button

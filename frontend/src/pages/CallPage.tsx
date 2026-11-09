@@ -96,13 +96,13 @@ export default function CallPage() {
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <h1 className="font-heading text-xl font-semibold">Consultation · {booking.topic ?? booking.ref}</h1>
           <span className={`font-mono text-[12px] ${over ? 'text-warn-text' : 'text-primary'}`}>
-            <span aria-hidden className="mr-1.5 inline-block size-2 rounded-full bg-[#E5484D] align-middle" />
+            <span aria-hidden className="mr-1.5 inline-block size-2 rounded-full bg-danger align-middle" />
             {mm(elapsed)} / {CALL_MINUTES}:00
           </span>
           <span className="font-mono text-[11px] tracking-[0.1em] text-faint">NOT RECORDED</span>
         </div>
 
-        <div className="relative mt-4 flex min-h-[280px] flex-1 flex-col items-center justify-center rounded-2xl border border-line bg-navy-950/70 p-6 text-center">
+        <div className="relative mt-4 flex min-h-[280px] flex-1 flex-col items-center justify-center rounded-2xl border border-line bg-well/70 p-6 text-center">
           <div className="flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-brass-light to-brass-dark text-2xl font-bold text-navy-950">
             {other.initials}
           </div>
@@ -123,7 +123,7 @@ export default function CallPage() {
         <div className="mt-4 flex justify-center">
           <button
             onClick={() => navigate(back)}
-            className="flex items-center gap-2 rounded-full bg-[#E5484D] px-6 py-3 text-sm font-bold text-white hover:bg-[#d13a3f]"
+            className="flex items-center gap-2 rounded-full bg-danger px-6 py-3 text-sm font-bold text-white hover:bg-danger/90"
           >
             <PhoneOff className="size-4" /> Leave call room
           </button>
@@ -212,7 +212,7 @@ export default function CallPage() {
                 onChange={(e) => saveNotes(e.target.value)}
                 rows={12}
                 placeholder="What was said, what to do next…"
-                className="w-full flex-1 rounded-lg border border-line bg-navy-950/60 p-3 text-[14.5px] text-ink placeholder:text-faint focus:border-primary focus:outline-none"
+                className="w-full flex-1 rounded-lg border border-line bg-well/60 p-3 text-[14.5px] text-ink placeholder:text-faint focus:border-primary focus:outline-none"
               />
             </label>
           )}

@@ -1,62 +1,46 @@
 import animate from 'tailwindcss-animate'
 
+// A theme colour that keeps Tailwind's opacity modifiers (bg-brass/10) working.
+const v = (name) => `rgb(var(--${name}) / <alpha-value>)`
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
-        // Orbit theme: dark navy with a faint brass grid, brass accents, cream highlights.
-        primary: {
-          DEFAULT: '#D9B56E',
-          hover: '#E6C88A',
-          foreground: '#0A1424',
-        },
-        // shadcn/ui token names, mapped onto the Orbit palette
-        background: '#0A1424',
-        foreground: '#F3F5F9',
-        border: '#24364F',
-        input: '#2B3F5C',
-        ring: '#D9B56E',
-        secondary: { DEFAULT: '#162A47', foreground: '#F3F5F9' },
-        accent: { DEFAULT: '#162A47', foreground: '#F3F5F9' },
-        destructive: { DEFAULT: '#E5484D', foreground: '#FFFFFF' },
-        popover: { DEFAULT: '#0F1E33', foreground: '#F3F5F9' },
-        navy: {
-          950: '#070F1C',
-          900: '#0A1424',
-          800: '#0F1E33',
-          700: '#162A47',
-          600: '#1F3A5F',
-        },
-        brass: {
-          DEFAULT: '#B8893B',
-          light: '#D9B56E',
-          soft: '#F6EEDF',
-          dark: '#8C6526',
-        },
-        soft: '#162A47',
-        line: '#24364F',
-        ink: '#F3F5F9',
-        muted: '#A9B4C4',
-        bg: '#0A1424',
-        surface: '#0F1E33',
-        success: {
-          text: '#8FD3B1',
-          bg: '#12352B',
-          dark: '#5FB98E',
-          border: '#1F5543',
-        },
-        warn: {
-          text: '#E8C98A',
-          bg: '#2A2214',
-          border: '#4A3B1E',
-        },
-        focus: '#D9B56E',
-        faint: '#8592A6',
-        body2: '#C9D1DC',
-        body3: '#DCE2EA',
-        scrollbar: '#2B3F5C',
+        // Theme tokens are CSS variables (src/index.css): Ivory light by default, Orbit navy under
+        // [data-theme="dark"]. Brand navy (navy-*) is fixed in both themes.
+        primary: { DEFAULT: v('primary'), hover: v('primary-hover'), foreground: v('primary-fg') },
+        background: v('background'),
+        foreground: v('foreground'),
+        border: v('border'),
+        input: v('input'),
+        ring: v('ring'),
+        secondary: { DEFAULT: v('secondary'), foreground: v('secondary-fg') },
+        accent: { DEFAULT: v('secondary'), foreground: v('secondary-fg') },
+        destructive: { DEFAULT: v('destructive'), foreground: '#FFFFFF' },
+        popover: { DEFAULT: v('popover'), foreground: v('popover-fg') },
+        navy: { 950: '#070F1C', 900: '#0A1424', 800: '#0F1E33', 700: '#162A47', 600: '#1F3A5F' },
+        brass: { DEFAULT: v('brass'), light: v('brass-light'), soft: v('brass-soft'), dark: v('brass-dark') },
+        soft: v('soft'),
+        line: v('line'),
+        ink: v('ink'),
+        muted: v('muted'),
+        bg: v('bg'),
+        surface: v('surface'),
+        success: { text: v('success-text'), bg: v('success-bg'), dark: v('success-dark'), border: v('success-border') },
+        warn: { text: v('warn-text'), bg: v('warn-bg'), border: v('warn-border') },
+        focus: v('focus'),
+        faint: v('faint'),
+        body2: v('body2'),
+        body3: v('body3'),
+        scrollbar: v('scrollbar'),
+        fg: v('fg'),
+        display: v('display'),
+        info: v('info'),
+        danger: v('danger'),
+        well: v('well'), // inset panels and form fields
       },
       fontFamily: {
         heading: ['Fraunces', 'Georgia', 'serif'],
@@ -65,11 +49,9 @@ export default {
         mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       boxShadow: {
-        soft: '0 8px 24px rgba(0,0,0,0.35)',
-        login: '0 12px 40px rgba(0,0,0,0.4)',
-        card: '0 1px 2px rgba(0,0,0,0.25), 0 4px 16px rgba(0,0,0,0.25)',
-        lift: '0 2px 4px rgba(0,0,0,0.3), 0 16px 40px rgba(0,0,0,0.45)',
-        composer: '0 8px 30px rgba(0,0,0,0.45)',
+        card: 'var(--shadow-card)',
+        lift: 'var(--shadow-lift)',
+        composer: 'var(--shadow-composer)',
       },
       keyframes: {
         dotpulse: {
